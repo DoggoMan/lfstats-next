@@ -30,10 +30,14 @@ export default function GameView({ game }: any) {
         <title>LFStats Next</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box justifyContent="center" paddingTop="70">
+      <Box justifyContent="center" paddingTop="70" px={4}>
         {game.game_teams
           .filter(
             ({ team_desc }: { team_desc: string }) => team_desc !== "Neutral"
+          )
+          .sort(
+            (firstTeam: any, secondTeam: any) =>
+              secondTeam.score - firstTeam.score
           )
           .map((team: any) => (
             <Box
@@ -47,6 +51,14 @@ export default function GameView({ game }: any) {
               borderColor={`${team.ui_color}.400`}
               mx="auto"
             >
+              <Flex>
+                <Heading color={`${team.ui_color}.500`}>
+                  {team.team_desc}
+                </Heading>
+                <Spacer />
+                <Heading color={`${team.ui_color}.500`}>{team.score}</Heading>
+              </Flex>
+
               <Accordion allowMultiple allowToggle>
                 {team.game_entities
                   .filter(
@@ -55,8 +67,7 @@ export default function GameView({ game }: any) {
                   )
                   .sort(
                     (firstEntity: any, secondEntity: any) =>
-                      secondEntity.game_entity_states[0].score -
-                      firstEntity.game_entity_states[0].score
+                      secondEntity.score - firstEntity.score
                   )
                   .map((entity: any) => {
                     let state = entity.game_entity_states[0];
@@ -68,7 +79,11 @@ export default function GameView({ game }: any) {
                               <PositionIcon position={entity.position} />
                             </Box>
                             <Box px={1}>
-                              <Heading size="sm" color={`${team.ui_color}.600`}>
+                              <Heading
+                                size="sm"
+                                color={`${team.ui_color}.600`}
+                                isTruncated
+                              >
                                 {entity.entity_desc}
                               </Heading>
                             </Box>
@@ -611,6 +626,7 @@ export async function getServerSideProps() {
             ui_color
             team_desc
             team_index
+            score
             game_entities {
               battlesuit
               category
@@ -625,6 +641,7 @@ export async function getServerSideProps() {
               player_id
               position
               start_time
+              score
               player {
                 current_alias
                 ipl_id

@@ -135,6 +135,7 @@ export default function GameView({ game }: any) {
                               name="Medic Hits"
                               value={state.medic_hits}
                             />
+                            <StatDisplay name="Assists" value={state.assists} />
                             {state.cancel_opponent_nuke > 0 && (
                               <StatDisplay
                                 name="Nuke Cancels"
@@ -342,6 +343,10 @@ export default function GameView({ game }: any) {
                                       value={state.hit_diff_during_rapid.toFixed(
                                         2
                                       )}
+                                    />
+                                    <StatDisplay
+                                      name="Assists"
+                                      value={state.assists_during_rapid}
                                     />
                                     <StatDisplay
                                       name="Shots Fired"
@@ -652,6 +657,8 @@ export async function getServerSideProps() {
                 ammo_boost_received
                 ammo_boosts
                 ammo_boosted_players
+                assists
+                assists_during_rapid
                 cancel_opponent_nuke
                 cancel_team_nuke
                 current_hp

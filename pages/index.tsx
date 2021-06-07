@@ -528,6 +528,10 @@ export default function GameView({ game }: any) {
                                     value={state.destroy_base}
                                   />
                                   <StatDisplay
+                                    name="Bases Awarded"
+                                    value={state.award_base}
+                                  />
+                                  <StatDisplay
                                     name="Shot Base"
                                     value={state.shot_base}
                                   />
@@ -621,7 +625,7 @@ export async function getServerSideProps() {
   const { data } = await client.query({
     query: gql`
       query Game {
-        game: game_by_pk(id: "1") {
+        game: game_by_pk(id: "2") {
           center {
             name
           }
@@ -659,6 +663,7 @@ export async function getServerSideProps() {
                 ammo_boosted_players
                 assists
                 assists_during_rapid
+                award_base
                 cancel_opponent_nuke
                 cancel_team_nuke
                 current_hp

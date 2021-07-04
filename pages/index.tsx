@@ -75,18 +75,22 @@ export default function GameView({ game }: any) {
                       <AccordionItem key={entity.id}>
                         <h2>
                           <AccordionButton>
-                            <Box px={1} color={`${team.ui_color}.500`}>
-                              <PositionIcon position={entity.position} />
-                            </Box>
-                            <Box px={1}>
-                              <Heading
-                                size="sm"
-                                color={`${team.ui_color}.600`}
-                                isTruncated
-                              >
-                                {entity.entity_desc}
-                              </Heading>
-                            </Box>
+                            <Flex
+                              color={
+                                state.lives > 0
+                                  ? `${team.ui_color}.600`
+                                  : `gray.500`
+                              }
+                            >
+                              <Box px={1}>
+                                <PositionIcon position={entity.position} />
+                              </Box>
+                              <Box px={1}>
+                                <Heading size="sm" isTruncated>
+                                  {entity.entity_desc}
+                                </Heading>
+                              </Box>
+                            </Flex>
                             <Spacer />
                             <Box
                               px={1}

@@ -30,7 +30,7 @@ export interface GameData {
         current_alias: string
         ipl_id: any
       }
-      game_entity_states(where: { is_final: { _eq: true } }): {
+      game_entity_states: {
         accuracy: any
         accuracy_during_rapid: any
         ammo_boost_received: any

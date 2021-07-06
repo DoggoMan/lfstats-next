@@ -52,6 +52,7 @@ export async function getReplayData(
                 ipl_id
               }
               game_entity_states(
+                order_by: { state_time: asc_nulls_first }
                 where: {
                   state_time: { _gte: $earliestTime, _lte: $latestTime }
                 }

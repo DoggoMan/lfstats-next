@@ -1,7 +1,5 @@
-import Head from "next/head";
-import { gql } from "@apollo/client";
-import client from "../lib/apollo-client";
-import { millisToMinutesAndSeconds } from "../lib/helper";
+import Head from 'next/head'
+import { millisToMinutesAndSeconds } from '../lib/helper'
 import {
   Box,
   Accordion,
@@ -19,11 +17,16 @@ import {
   StatHelpText,
   Flex,
   SimpleGrid,
-} from "@chakra-ui/react";
-import { StatDisplay } from "../components/StatDisplay";
-import { PositionIcon } from "../components/PositionIcon";
+} from '@chakra-ui/react'
+import { StatDisplay } from '../components/StatDisplay'
+import { PositionIcon } from '../components/PositionIcon'
+import { getGameData, GameData } from '../lib/game'
 
-export default function GameView({ game }: any) {
+interface Props {
+  game: GameData
+}
+
+export default function GameView({ game }: Props) {
   return (
     <div>
       <Head>
@@ -33,7 +36,7 @@ export default function GameView({ game }: any) {
       <Box justifyContent="center" paddingTop="70" px={4}>
         {game.game_teams
           .filter(
-            ({ team_desc }: { team_desc: string }) => team_desc !== "Neutral"
+            ({ team_desc }: { team_desc: string }) => team_desc !== 'Neutral'
           )
           .sort(
             (firstTeam: any, secondTeam: any) =>
@@ -63,14 +66,14 @@ export default function GameView({ game }: any) {
                 {team.game_entities
                   .filter(
                     ({ entity_type }: { entity_type: string }) =>
-                      entity_type === "player"
+                      entity_type === 'player'
                   )
                   .sort(
                     (firstEntity: any, secondEntity: any) =>
                       secondEntity.score - firstEntity.score
                   )
                   .map((entity: any) => {
-                    let state = entity.game_entity_states[0];
+                    let state = entity.game_entity_states[0]
                     return (
                       <AccordionItem key={entity.id}>
                         <h2>
@@ -91,8 +94,8 @@ export default function GameView({ game }: any) {
                             <Box
                               px={1}
                               display={{
-                                base: "none",
-                                sm: "contents",
+                                base: 'none',
+                                sm: 'contents',
                               }}
                             >
                               <StatGroup>
@@ -103,8 +106,8 @@ export default function GameView({ game }: any) {
                             <Box
                               px={1}
                               display={{
-                                base: "contents",
-                                sm: "none",
+                                base: 'contents',
+                                sm: 'none',
                               }}
                             >
                               {state.score}
@@ -116,15 +119,15 @@ export default function GameView({ game }: any) {
                           <SimpleGrid minChildWidth="120px">
                             <Box
                               display={{
-                                base: "contents",
-                                sm: "none",
+                                base: 'contents',
+                                sm: 'none',
                               }}
                             >
                               <StatDisplay value={state.score} name="Score" />
                               <StatDisplay value="N/A" name="MVP" />
                             </Box>
                             <StatDisplay
-                              value={(state.accuracy * 100).toFixed(2) + "%"}
+                              value={(state.accuracy * 100).toFixed(2) + '%'}
                               name="Accuracy"
                             />
                             <StatDisplay
@@ -175,7 +178,7 @@ export default function GameView({ game }: any) {
                                 value={state.self_missile}
                               />
                             )}
-                            {entity.position !== "Heavy Weapons" && (
+                            {entity.position !== 'Heavy Weapons' && (
                               <>
                                 <StatDisplay
                                   name="SP Earned"
@@ -254,7 +257,7 @@ export default function GameView({ game }: any) {
                               </h1>
                               <AccordionPanel>
                                 <SimpleGrid minChildWidth="120px">
-                                  {entity.position === "Ammo Carrier" && (
+                                  {entity.position === 'Ammo Carrier' && (
                                     <>
                                       <StatDisplay
                                         name="Players Resupplied (Shots)"
@@ -270,7 +273,7 @@ export default function GameView({ game }: any) {
                                       />
                                     </>
                                   )}
-                                  {entity.position === "Medic" && (
+                                  {entity.position === 'Medic' && (
                                     <>
                                       <StatDisplay
                                         name="Players Resupplied (Lives)"
@@ -286,7 +289,7 @@ export default function GameView({ game }: any) {
                                       />
                                     </>
                                   )}
-                                  {entity.position !== "Ammo Carrier" && (
+                                  {entity.position !== 'Ammo Carrier' && (
                                     <>
                                       <StatDisplay
                                         name="Ammo Resupplies"
@@ -298,7 +301,7 @@ export default function GameView({ game }: any) {
                                       />
                                     </>
                                   )}
-                                  {entity.position !== "Medic" && (
+                                  {entity.position !== 'Medic' && (
                                     <>
                                       <StatDisplay
                                         name="Lives Resupplies"
@@ -313,7 +316,7 @@ export default function GameView({ game }: any) {
                                 </SimpleGrid>
                               </AccordionPanel>
                             </AccordionItem>
-                            {entity.position === "Scout" && (
+                            {entity.position === 'Scout' && (
                               <AccordionItem>
                                 <h1>
                                   <AccordionButton>
@@ -335,7 +338,7 @@ export default function GameView({ game }: any) {
                                       value={
                                         (
                                           state.accuracy_during_rapid * 100
-                                        ).toFixed(2) + "%"
+                                        ).toFixed(2) + '%'
                                       }
                                     />
                                     <StatDisplay
@@ -400,8 +403,8 @@ export default function GameView({ game }: any) {
                                 </AccordionPanel>
                               </AccordionItem>
                             )}
-                            {(entity.position === "Heavy Weapons" ||
-                              entity.position === "Commander") && (
+                            {(entity.position === 'Heavy Weapons' ||
+                              entity.position === 'Commander') && (
                               <AccordionItem>
                                 <h1>
                                   <AccordionButton>
@@ -435,7 +438,7 @@ export default function GameView({ game }: any) {
                                 </AccordionPanel>
                               </AccordionItem>
                             )}
-                            {entity.position === "Commander" && (
+                            {entity.position === 'Commander' && (
                               <AccordionItem>
                                 <h1>
                                   <AccordionButton>
@@ -607,147 +610,21 @@ export default function GameView({ game }: any) {
                           </Accordion>
                         </AccordionPanel>
                       </AccordionItem>
-                    );
+                    )
                   })}
               </Accordion>
             </Box>
           ))}
       </Box>
     </div>
-  );
+  )
 }
 
 export async function getServerSideProps() {
-  const { data } = await client.query({
-    query: gql`
-      query Game {
-        game: game_by_pk(id: "1") {
-          center {
-            name
-          }
-          game_teams {
-            color_desc
-            color_enum
-            ui_color
-            team_desc
-            team_index
-            score
-            game_entities {
-              battlesuit
-              category
-              eliminated
-              end_code
-              end_time
-              entity_level
-              entity_type
-              entity_desc
-              id
-              ipl_id
-              player_id
-              position
-              start_time
-              score
-              player {
-                current_alias
-                ipl_id
-              }
-              game_entity_states(where: { is_final: { _eq: true } }) {
-                accuracy
-                accuracy_during_rapid
-                ammo_boost_received
-                ammo_boosts
-                ammo_boosted_players
-                assists
-                assists_during_rapid
-                cancel_opponent_nuke
-                cancel_team_nuke
-                current_hp
-                cancel_team_nuke_by_resupply
-                deac_3hit
-                deac_3hit_during_rapid
-                deac_opponent_during_rapid
-                deac_opponent
-                deac_team
-                destroy_base
-                deac_team_during_rapid
-                entity_id
-                hit_diff
-                hit_diff_during_rapid
-                id
-                is_active
-                is_eliminated
-                is_final
-                is_nuking
-                is_rapid
-                last_deac_time
-                last_deac_type
-                life_boost_received
-                life_boosted_players
-                life_boosts
-                lives
-                medic_hits
-                medic_hits_during_rapid
-                miss_base
-                missile_base
-                missile_opponent
-                missile_team
-                missiles_left
-                nuke_downtime
-                nuke_medic_hits
-                nukes_activated
-                nukes_detonated
-                opp_deac_downtime
-                own_medic_hits
-                own_nuke_canceled_by_game_end
-                own_nuke_canceled_by_nuke
-                own_nuke_canceled_by_opponent
-                own_nuke_canceled_by_penalty
-                own_nuke_canceled_by_resupply
-                own_nuke_canceled_by_team
-                penalties
-                penalty_downtime
-                rapid_fires
-                resupply_downtime
-                resupply_lives
-                resupply_shots
-                score
-                self_deac
-                self_deac_during_rapid
-                self_hit
-                self_hit_during_rapid
-                self_missile
-                self_missile_during_rapid
-                self_resupply_lives
-                self_resupply_shots
-                shot_3hit
-                shot_3hit_during_rapid
-                shot_base
-                shot_opponent
-                shot_opponent_during_rapid
-                shot_team
-                shot_team_during_rapid
-                shots
-                shots_fired
-                shots_fired_during_rapid
-                shots_hit
-                shots_hit_during_rapid
-                sp_earned
-                sp_spent
-                state_time
-                team_deac_downtime
-                times_missiled
-                uptime
-              }
-            }
-          }
-        }
-      }
-    `,
-  });
-
+  const data = await getGameData(1)
   return {
     props: {
-      game: data.game,
+      game: data,
     },
-  };
+  }
 }

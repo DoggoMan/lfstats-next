@@ -25,6 +25,7 @@ export default function Homepage() {
             LFStats Next
           </Heading>
 
+
           <NextLink href={'/game/1'}>
             <Link>View Example Game</Link>
           </NextLink>
@@ -32,4 +33,6 @@ export default function Homepage() {
       </Box>
     </div>
   )
+
+              
 }

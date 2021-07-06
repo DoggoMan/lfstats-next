@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import Head from "next/head";
 
 import {
   Box,
@@ -17,14 +17,14 @@ import {
   StatHelpText,
   Flex,
   SimpleGrid,
-} from '@chakra-ui/react'
-import { StatDisplay } from '../../components/StatDisplay'
-import { PositionIcon } from '../../components/PositionIcon'
-import { getGameData, GameData } from '../../lib/game'
-import { millisToMinutesAndSeconds } from '../../lib/helper'
+} from "@chakra-ui/react";
+import { StatDisplay } from "../../components/StatDisplay";
+import { PositionIcon } from "../../components/PositionIcon";
+import { getGameData, GameData } from "../../lib/game";
+import { millisToMinutesAndSeconds } from "../../lib/helper";
 
 interface Props {
-  game: GameData
+  game: GameData;
 }
 
 export default function GameView({ game }: Props) {
@@ -37,7 +37,7 @@ export default function GameView({ game }: Props) {
       <Box justifyContent="center" paddingTop="70" px={4}>
         {game.game_teams
           .filter(
-            ({ team_desc }: { team_desc: string }) => team_desc !== 'Neutral'
+            ({ team_desc }: { team_desc: string }) => team_desc !== "Neutral"
           )
           .sort((firstTeam, secondTeam) => secondTeam.score - firstTeam.score)
           .map((team) => (
@@ -64,14 +64,14 @@ export default function GameView({ game }: Props) {
                 {team.game_entities
                   .filter(
                     ({ entity_type }: { entity_type: string }) =>
-                      entity_type === 'player'
+                      entity_type === "player"
                   )
                   .sort(
                     (firstEntity: any, secondEntity: any) =>
                       secondEntity.score - firstEntity.score
                   )
                   .map((entity: any) => {
-                    let state = entity.game_entity_states[0]
+                    let state = entity.game_entity_state_final;
                     return (
                       <AccordionItem key={entity.id}>
                         <h2>
@@ -92,8 +92,8 @@ export default function GameView({ game }: Props) {
                             <Box
                               px={1}
                               display={{
-                                base: 'none',
-                                sm: 'contents',
+                                base: "none",
+                                sm: "contents",
                               }}
                             >
                               <StatGroup>
@@ -104,8 +104,8 @@ export default function GameView({ game }: Props) {
                             <Box
                               px={1}
                               display={{
-                                base: 'contents',
-                                sm: 'none',
+                                base: "contents",
+                                sm: "none",
                               }}
                             >
                               {state.score}
@@ -117,15 +117,15 @@ export default function GameView({ game }: Props) {
                           <SimpleGrid minChildWidth="120px">
                             <Box
                               display={{
-                                base: 'contents',
-                                sm: 'none',
+                                base: "contents",
+                                sm: "none",
                               }}
                             >
                               <StatDisplay value={state.score} name="Score" />
                               <StatDisplay value="N/A" name="MVP" />
                             </Box>
                             <StatDisplay
-                              value={(state.accuracy * 100).toFixed(2) + '%'}
+                              value={(state.accuracy * 100).toFixed(2) + "%"}
                               name="Accuracy"
                             />
                             <StatDisplay
@@ -176,7 +176,7 @@ export default function GameView({ game }: Props) {
                                 value={state.self_missile}
                               />
                             )}
-                            {entity.position !== 'Heavy Weapons' && (
+                            {entity.position !== "Heavy Weapons" && (
                               <>
                                 <StatDisplay
                                   name="SP Earned"
@@ -255,7 +255,7 @@ export default function GameView({ game }: Props) {
                               </h1>
                               <AccordionPanel>
                                 <SimpleGrid minChildWidth="120px">
-                                  {entity.position === 'Ammo Carrier' && (
+                                  {entity.position === "Ammo Carrier" && (
                                     <>
                                       <StatDisplay
                                         name="Players Resupplied (Shots)"
@@ -271,7 +271,7 @@ export default function GameView({ game }: Props) {
                                       />
                                     </>
                                   )}
-                                  {entity.position === 'Medic' && (
+                                  {entity.position === "Medic" && (
                                     <>
                                       <StatDisplay
                                         name="Players Resupplied (Lives)"
@@ -287,7 +287,7 @@ export default function GameView({ game }: Props) {
                                       />
                                     </>
                                   )}
-                                  {entity.position !== 'Ammo Carrier' && (
+                                  {entity.position !== "Ammo Carrier" && (
                                     <>
                                       <StatDisplay
                                         name="Ammo Resupplies"
@@ -299,7 +299,7 @@ export default function GameView({ game }: Props) {
                                       />
                                     </>
                                   )}
-                                  {entity.position !== 'Medic' && (
+                                  {entity.position !== "Medic" && (
                                     <>
                                       <StatDisplay
                                         name="Lives Resupplies"
@@ -314,7 +314,7 @@ export default function GameView({ game }: Props) {
                                 </SimpleGrid>
                               </AccordionPanel>
                             </AccordionItem>
-                            {entity.position === 'Scout' && (
+                            {entity.position === "Scout" && (
                               <AccordionItem>
                                 <h1>
                                   <AccordionButton>
@@ -336,7 +336,7 @@ export default function GameView({ game }: Props) {
                                       value={
                                         (
                                           state.accuracy_during_rapid * 100
-                                        ).toFixed(2) + '%'
+                                        ).toFixed(2) + "%"
                                       }
                                     />
                                     <StatDisplay
@@ -401,8 +401,8 @@ export default function GameView({ game }: Props) {
                                 </AccordionPanel>
                               </AccordionItem>
                             )}
-                            {(entity.position === 'Heavy Weapons' ||
-                              entity.position === 'Commander') && (
+                            {(entity.position === "Heavy Weapons" ||
+                              entity.position === "Commander") && (
                               <AccordionItem>
                                 <h1>
                                   <AccordionButton>
@@ -436,7 +436,7 @@ export default function GameView({ game }: Props) {
                                 </AccordionPanel>
                               </AccordionItem>
                             )}
-                            {entity.position === 'Commander' && (
+                            {entity.position === "Commander" && (
                               <AccordionItem>
                                 <h1>
                                   <AccordionButton>
@@ -608,23 +608,23 @@ export default function GameView({ game }: Props) {
                           </Accordion>
                         </AccordionPanel>
                       </AccordionItem>
-                    )
+                    );
                   })}
               </Accordion>
             </Box>
           ))}
       </Box>
     </div>
-  )
+  );
 }
 
 export async function getServerSideProps(context: any) {
-  const gameId = context.params.gid
-  const data = await getGameData(gameId)
+  const gameId = context.params.gid;
+  const data = await getGameData(gameId);
 
   return {
     props: {
       game: data,
     },
-  }
+  };
 }

@@ -29,7 +29,7 @@ export interface GameData {
         current_alias: string;
         ipl_id: any;
       };
-      game_entity_states(where: { is_final: { _eq: true } }): {
+      game_entity_state_final: {
         accuracy: any;
         accuracy_during_rapid: any;
         ammo_boost_received: any;
@@ -115,7 +115,7 @@ export interface GameData {
         team_deac_downtime: any;
         times_missiled: any;
         uptime: any;
-      }[];
+      };
     }[];
   }[];
 }
@@ -154,7 +154,7 @@ export async function getGameData(id: number): Promise<GameData> {
                 current_alias
                 ipl_id
               }
-              game_entity_states(where: { is_final: { _eq: true } }) {
+              game_entity_state_final: v_game_entity_state_final {
                 accuracy
                 accuracy_during_rapid
                 ammo_boost_received

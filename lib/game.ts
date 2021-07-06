@@ -2,6 +2,7 @@ import { gql } from '@apollo/client'
 import client from './apollo-client'
 
 export interface GameData {
+  id: number
   center: { name: string }
   game_teams: {
     color_desc: string
@@ -125,6 +126,7 @@ export async function getGameData(id: number): Promise<GameData> {
     query: gql`
       query Game($id: bigint!) {
         game: game_by_pk(id: $id) {
+          id
           center {
             name
           }

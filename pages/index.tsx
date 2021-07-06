@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { Box, Heading, Link } from '@chakra-ui/react'
-import { getGameData } from '../lib/game'
 
 export default function Homepage() {
   return (

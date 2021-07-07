@@ -41,7 +41,8 @@ export default function ReplayView({ replay }: Props) {
   const router = useRouter()
   const { isRunning, setIsRunning, elapsedTime, setElapsedTime } = useTimer()
 
-  //       TODO: automatically update the UI with the newer activeStates, whenever they change
+  //   TODO: automatically fetch additional game_entity_states when the time is updated
+  //   TODO: automatically pause the clock
   const activeStates = useMemo(() => {
     const states: (
       | (ReplayData['game_teams'][0]['game_entities'][0]['game_entity_states'][0] & {
@@ -241,7 +242,7 @@ export default function ReplayView({ replay }: Props) {
                             <AccordionIcon />
                           </AccordionButton>
                         </h2>
-                        {/* TODO: replace this with */}
+                        {/* TODO: update the Acccordion header to display current lives/shots/spec and Active status */}
                         <AccordionPanel pb={4}>
                           {!state ? (
                             <div>NO DATA!</div>

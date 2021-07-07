@@ -36,16 +36,13 @@ import { millisToMinutesAndSeconds } from '../../lib/helper'
 import { getReplayData, ReplayData } from '../../lib/replay'
 import { useTimer } from '../../lib/stopwatch'
 import { PlayerProps, PlayerState } from '../../components/PlayerState'
+import { GameEntity, GameEntityState } from '../../lib/game'
 
-type ExtendedGameEntityState =
-  ReplayData['game_teams'][0]['game_entities'][0]['game_entity_states'][0] & {
-    playerId: number
-  }
+type ExtendedGameEntityState = GameEntityState & {
+  playerId: number
+}
 
-type PlayerState = Omit<
-  ReplayData['game_teams'][0]['game_entities'][0],
-  'game_entity_states'
->
+type Player = Omit<GameEntity, 'game_entity_states'>
 
 const FlippablePlayerState = forwardRef((props: PlayerProps, ref) => (
   <div ref={ref as any}>
@@ -86,7 +83,7 @@ export default function ReplayView({ replay }: Props) {
   }, [replay])
 
   const allPlayers = useMemo(() => {
-    return replay.game_teams.reduce((acc: PlayerState[], team) => {
+    return replay.game_teams.reduce((acc: Player[], team) => {
       const teamPlayers = team.game_entities
         .filter((entity) => entity.player)
         .map((entity) => ({
@@ -278,71 +275,88 @@ export default function ReplayView({ replay }: Props) {
             />
           </Flex>
         </Box>
-        {replay.game_teams
-          .filter(
-            ({ team_desc }: { team_desc: string }) => team_desc !== 'Neutral'
-          )
-          .sort((firstTeam, secondTeam) => secondTeam.score - firstTeam.score)
-          .map((team) => {
-            const teamData = teamScores.find(
-              (tScore) => tScore.team === team.team_desc
+        {/* This works, although it does throw a warning
+	 in both server-side compile and client-side console...
+	 To resolve the warning, we may have to do similar to FlippablePlayerState toward the top of this file */}
+        <FlipMove>
+          {replay.game_teams
+            .filter(
+              ({ team_desc }: { team_desc: string }) => team_desc !== 'Neutral'
             )
-            return (
-              <Box
-                maxW="2xl"
-                borderWidth="1px"
-                borderRadius="md"
-                boxShadow="base"
-                key={team.team_index}
-                p={2}
-                my={4}
-                borderColor={`${team.ui_color}.400`}
-                mx="auto"
-              >
-                <Flex>
-                  <Heading color={`${team.ui_color}.500`}>
-                    {team.team_desc}
-                  </Heading>
-                  <Spacer />
-                  <Heading color={`${team.ui_color}.500`}>
-                    {teamData?.score}
-                  </Heading>
-                </Flex>
+            .sort((firstTeam, secondTeam) => {
+              const firstTeamScore =
+                teamScores.find((team) => team?.team === firstTeam.team_desc)
+                  ?.score ?? 0
 
-                <Accordion allowMultiple allowToggle>
-                  <FlipMove>
-                    {team.game_entities
-                      .filter(
-                        ({ entity_type }: { entity_type: string }) =>
-                          entity_type === 'player'
-                      )
-                      .sort((firstEntity, secondEntity) => {
-                        const firstEntityScore = activeStates.find(
-                          (state) => state?.playerId === firstEntity.ipl_id
-                        )?.score
-                        const secondEntityScore = activeStates.find(
-                          (state) => state?.playerId === secondEntity.ipl_id
-                        )?.score
-                        return secondEntityScore - firstEntityScore
-                      })
-                      .map((entity) => {
-                        const state = activeStates.find(
-                          (state) => state?.playerId === entity.ipl_id
-                        )
-                        return (
-                          <FlippablePlayerState
-                            team={team}
-                            entity={entity}
-                            state={state}
-                            key={entity.id}
-                          />
-                        )
-                      })}
-                  </FlipMove>
-                </Accordion>
-              </Box>
-            )
-          })}
+              const secondTeamScore =
+                teamScores.find((team) => team?.team === secondTeam.team_desc)
+                  ?.score ?? 0
+              return secondTeamScore - firstTeamScore
+            })
+            .map((team) => {
+              const teamData = teamScores.find(
+                (tScore) => tScore.team === team.team_desc
+              )
+              return (
+                <div key={team.team_index}>
+                  <Box
+                    maxW="2xl"
+                    borderWidth="1px"
+                    borderRadius="md"
+                    boxShadow="base"
+                    key={team.team_index}
+                    p={2}
+                    my={4}
+                    borderColor={`${team.ui_color}.400`}
+                    mx="auto"
+                  >
+                    <Flex>
+                      <Heading color={`${team.ui_color}.500`}>
+                        {team.team_desc}
+                      </Heading>
+                      <Spacer />
+                      <Heading color={`${team.ui_color}.500`}>
+                        {teamData?.score}
+                      </Heading>
+                    </Flex>
+
+                    <Accordion allowMultiple allowToggle>
+                      <FlipMove>
+                        {team.game_entities
+                          .filter(
+                            ({ entity_type }: { entity_type: string }) =>
+                              entity_type === 'player'
+                          )
+                          .sort((firstEntity, secondEntity) => {
+                            const firstEntityScore = activeStates.find(
+                              (state) => state?.playerId === firstEntity.ipl_id
+                            )?.score
+                            const secondEntityScore = activeStates.find(
+                              (state) => state?.playerId === secondEntity.ipl_id
+                            )?.score
+                            return secondEntityScore - firstEntityScore
+                          })
+                          .map((entity) => {
+                            const state =
+                              activeStates.find(
+                                (state) => state?.playerId === entity.ipl_id
+                              ) ?? null
+                            return (
+                              <FlippablePlayerState
+                                team={team}
+                                entity={entity}
+                                state={state}
+                                key={entity.id}
+                              />
+                            )
+                          })}
+                      </FlipMove>
+                    </Accordion>
+                  </Box>
+                </div>
+              )
+            })}
+        </FlipMove>
       </Box>
     </div>
   )

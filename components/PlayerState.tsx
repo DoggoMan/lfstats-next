@@ -18,11 +18,12 @@ import { millisToMinutesAndSeconds } from '../lib/helper'
 import { PositionIcon } from './PositionIcon'
 import { StatDisplay } from './StatDisplay'
 import { useEffect } from 'react'
+import { GameEntity, GameEntityState, GameTeam } from '../lib/game'
 
 export interface PlayerProps {
-  team: any
-  entity: any
-  state: any
+  team: GameTeam
+  entity: Omit<GameEntity, 'game_entity_states'>
+  state: GameEntityState | null
 }
 
 export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
@@ -70,6 +71,10 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
           >
             <StatGroup>
               <StatDisplay value={state?.score || 0} name="Score" />
+              <StatDisplay
+                value={String(state?.sp_earned - state?.sp_spent || 0)}
+                name="Spec"
+              />
               {/* <StatDisplay value="N/A" name="MVP" /> */}
               <StatDisplay value={state?.lives || 0} name="Lives" />{' '}
               <StatDisplay value={state?.shots || 0} name="Shots" />
@@ -87,7 +92,6 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
           <AccordionIcon />
         </AccordionButton>
       </h2>
-      {/* TODO: update the Acccordion header to display current lives/shots/spec and Active status */}
       <AccordionPanel pb={4}>
         {!state ? (
           <div>NO DATA!</div>

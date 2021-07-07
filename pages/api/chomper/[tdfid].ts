@@ -35,7 +35,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   //go find the TDF file and get it from S3
   //then read line by line and load to the db
-  const s3Client = new S3Client({ region: "us-east-1" });
+  const s3Client = new S3Client({
+    credentials: {
+      accessKeyId: `${process.env.AWS_S3_ACCESS_KEY}`,
+      secretAccessKey: `${process.env.AWS_S3_SECRET_KEY}`,
+    },
+    region: "us-east-1",
+  });
   const s3Command = new GetObjectCommand({
     Bucket: "lfstats-scorecard-archive",
     Key: `${tdfId}.tdf`,

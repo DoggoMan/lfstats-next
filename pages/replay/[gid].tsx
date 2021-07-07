@@ -1,27 +1,16 @@
 import { useEffect, useMemo, useState, forwardRef } from 'react'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import FlipMove from 'react-flip-move'
 
 import {
   Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Button,
-  Center,
   Flex,
   Heading,
   IconButton,
-  SimpleGrid,
+  Link,
   Spacer,
-  Stat,
-  StatGroup,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
   Text,
 } from '@chakra-ui/react'
 import {
@@ -29,9 +18,6 @@ import {
   ArrowRightIcon,
   RepeatClockIcon,
 } from '@chakra-ui/icons'
-import { BsCircleFill } from 'react-icons/bs'
-import { StatDisplay } from '../../components/StatDisplay'
-import { PositionIcon } from '../../components/PositionIcon'
 import { millisToMinutesAndSeconds } from '../../lib/helper'
 import { getReplayData, ReplayData } from '../../lib/replay'
 import { useTimer } from '../../lib/stopwatch'
@@ -55,15 +41,12 @@ interface Props {
 }
 
 export default function ReplayView({ replay }: Props) {
-  const router = useRouter()
   const { isRunning, setIsRunning, elapsedTime, setElapsedTime } = useTimer()
+  const missionStart = new Date(replay.mission_start)
 
-  //   const [activeStates, setActiveStates] = useState<
-  //     (ExtendedGameEntityState | null)[]
-  //   >([])
-
-  //   TODO: automatically fetch additional game_entity_states when the time is updated
-  //   TODO: automatically pause the clock when we run out of additional entity_states to show - 'bufferring'
+  // TODO: automatically fetch additional game_entity_states when the time is updated
+  // TODO: automatically pause the clock when we run out of additional entity_states to show - 'bufferring'
+  // TODO: investigate very poor accordion performance (open/close) while timer is running
 
   const allStates: ExtendedGameEntityState[] = useMemo(() => {
     return replay.game_teams.reduce((acc: ExtendedGameEntityState[], team) => {
@@ -94,8 +77,6 @@ export default function ReplayView({ replay }: Props) {
     }, [])
   }, [replay])
 
-  // Reviewing whether useState has any less re-renders than useMemo, for activeStates.
-  // Not sure if upon a single player's activeState changing, is it causing a re-render for every player's card.
   const activeStates = useMemo(() => {
     const states: (ExtendedGameEntityState | null)[] = allPlayers.map(
       (player) => {
@@ -107,35 +88,13 @@ export default function ReplayView({ replay }: Props) {
         if (data) {
           return { ...data, playerId: player.ipl_id }
         }
+        // This is actually quite annoying. It may be worth implementing a dummy initial player state generator
+        // just to avoid returning null here sometimes
         return null
       }
     )
     return states
   }, [elapsedTime, allPlayers])
-
-  /**
-   * 
-  useEffect(() => {
-    const elapsedMillis = elapsedTime * 1000
-    const relevantStates = allStates.filter(
-      (state) => state.state_time <= elapsedMillis
-    )
-    const newActiveStates = allPlayers.map((player) => {
-      const data = relevantStates
-        .filter((state) => state.playerId === player.ipl_id)
-        .pop()
-
-      if (data) {
-        return { ...data, playerId: player.ipl_id }
-      }
-      return null
-    })
-    setActiveStates(newActiveStates)
-    //     setActiveStates((prev) =>
-    //       prev !== newActiveStates ? newActiveStates : null
-    //     )
-  }, [allStates, allPlayers, elapsedTime])
-	*/
 
   const latestState = useMemo(
     (): number => allStates[allStates.length - 1]?.state_time ?? 0,
@@ -153,11 +112,6 @@ export default function ReplayView({ replay }: Props) {
   //   }, [activeStates])
 
   const teamScores = useMemo(() => {
-    //     const scores = [
-    //       { team: 'red', score: 0 },
-    //       { team: 'green', score: 0 },
-    //     ]
-
     const scores = replay.game_teams.map((team) => ({
       team: team.team_desc,
       score: team.game_entities.reduce(
@@ -172,7 +126,7 @@ export default function ReplayView({ replay }: Props) {
   }, [activeStates, replay])
 
   useEffect(() => {
-    if (latestState && elapsedTime && latestState < elapsedTime) {
+    if (latestState && elapsedTime && latestState < elapsedTime * 1000) {
       setIsRunning(false)
       window.alert('Loading additional entity states')
     }
@@ -193,6 +147,15 @@ export default function ReplayView({ replay }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box justifyContent="center" paddingTop="70" px={4}>
+        <Box maxW="2xl" key={'game header'} p={2} my={4} mx="auto">
+          <Flex>
+            <Heading>
+              Game at {missionStart.getHours()}:{missionStart.getMinutes()}
+            </Heading>
+            {/* REVIEW: We can't even link to lfstats.com because the replay.id is not the lfstats game id :( */}
+            {/* <Link href={`https://lfstats.com/games/view/${replay.id}`}></Link> */}
+          </Flex>
+        </Box>
         <Box
           maxW="2xl"
           borderWidth="1px"

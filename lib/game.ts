@@ -123,6 +123,8 @@ export interface GameTeam {
 
 export interface GameData {
   id: number
+  mission_start: string
+  mission_length: number
   center: { name: string }
   game_teams: GameTeam[]
 }
@@ -133,6 +135,8 @@ export async function getGameData(id: number): Promise<GameData> {
       query Game($id: bigint!) {
         game: game_by_pk(id: $id) {
           id
+          mission_start
+          mission_length
           center {
             name
           }

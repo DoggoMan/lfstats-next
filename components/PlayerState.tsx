@@ -32,6 +32,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
   }, [])
 
   useEffect(() => {
+    //   NOTE: useful for investigating how often this recomputes, but quite noisy
     //     console.log(`Updated playerState for ${entity.entity_desc}`)
   }, [state])
 
@@ -51,7 +52,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
               <Center>
                 <BsCircleFill
                   color={
-                    state?.is_active
+                    state?.is_active ?? true
                       ? 'green'
                       : state?.last_deac_type === 'resupply'
                       ? 'yellow'

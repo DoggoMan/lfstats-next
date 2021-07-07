@@ -22,6 +22,7 @@ export const useTimer = () => {
   // Max game length is 15 minutes. If the clock exceeds this, we should automatically clamp the value.
   // We might as well clamp the bottom too, to prevent a negative time value.
   useEffect(() => {
+    // TODO: use game_length to clamp to elim game finish times, instead of assuming full 15 minutes.
     if (elapsedTime > 15 * 60) {
       setIsRunning(false)
       setElapsedTime(15 * 60)

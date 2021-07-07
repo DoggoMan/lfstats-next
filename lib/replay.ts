@@ -22,6 +22,8 @@ export async function getReplayData(
       query Replay($id: bigint!, $earliestTime: Int!, $latestTime: Int!) {
         game: game_by_pk(id: $id) {
           id
+          mission_start
+          mission_length
           center {
             name
           }

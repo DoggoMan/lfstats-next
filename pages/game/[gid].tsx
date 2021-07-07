@@ -67,10 +67,10 @@ export default function GameView({ game }: Props) {
                       entity_type === 'player'
                   )
                   .sort(
-                    (firstEntity: any, secondEntity: any) =>
+                    (firstEntity, secondEntity) =>
                       secondEntity.score - firstEntity.score
                   )
-                  .map((entity: any) => {
+                  .map((entity) => {
                     let state = entity.game_entity_states[0]
                     return (
                       <AccordionItem key={entity.id}>

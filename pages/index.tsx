@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import NextLink from 'next/link'
-import { Box, Heading, Link } from '@chakra-ui/react'
-import { getGameData } from '../lib/game'
+import { Box, Heading, Link, UnorderedList, ListItem } from '@chakra-ui/react'
 
 export default function Homepage() {
   return (
@@ -24,11 +23,18 @@ export default function Homepage() {
           <Heading paddingBottom="30" color={`cyan.500`}>
             LFStats Next
           </Heading>
-
-
-          <NextLink href={'/game/1'}>
-            <Link>View Example Game</Link>
-          </NextLink>
+          <UnorderedList>
+            <ListItem>
+              <NextLink href={'/game/1'}>
+                <Link>View Example Game</Link>
+              </NextLink>
+            </ListItem>
+            <ListItem>
+              <NextLink href={'/replay/1'}>
+                <Link>View Example Replay</Link>
+              </NextLink>
+            </ListItem>
+          </UnorderedList>
         </Box>
       </Box>
     </div>

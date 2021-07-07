@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
@@ -10,6 +10,7 @@ import {
   AccordionPanel,
   Box,
   Button,
+  Center,
   Flex,
   Heading,
   IconButton,
@@ -27,11 +28,22 @@ import {
   ArrowRightIcon,
   RepeatClockIcon,
 } from '@chakra-ui/icons'
+import { BsCircleFill } from 'react-icons/bs'
 import { StatDisplay } from '../../components/StatDisplay'
 import { PositionIcon } from '../../components/PositionIcon'
 import { millisToMinutesAndSeconds } from '../../lib/helper'
 import { getReplayData, ReplayData } from '../../lib/replay'
 import { useTimer } from '../../lib/stopwatch'
+
+type ExtendedGameEntityState =
+  ReplayData['game_teams'][0]['game_entities'][0]['game_entity_states'][0] & {
+    playerId: number
+  }
+
+type PlayerState = Omit<
+  ReplayData['game_teams'][0]['game_entities'][0],
+  'game_entity_states'
+>
 
 interface Props {
   replay: ReplayData
@@ -42,32 +54,87 @@ export default function ReplayView({ replay }: Props) {
   const { isRunning, setIsRunning, elapsedTime, setElapsedTime } = useTimer()
 
   //   TODO: automatically fetch additional game_entity_states when the time is updated
-  //   TODO: automatically pause the clock
+  //   TODO: automatically pause the clock when we run out of additional entity_states to show - 'bufferring'
+
+  const allStates: ExtendedGameEntityState[] = useMemo(() => {
+    return replay.game_teams.reduce((acc: ExtendedGameEntityState[], team) => {
+      const teamEntityStates = team.game_entities.reduce(
+        (acc: ExtendedGameEntityState[], player) => {
+          const playerEntityStates = player.game_entity_states.map((state) => ({
+            ...state,
+            playerId: player.ipl_id,
+          }))
+          return [...acc, ...playerEntityStates]
+        },
+        []
+      )
+
+      return [...acc, ...teamEntityStates]
+    }, [])
+  }, [replay])
+
+  const allPlayers = useMemo(() => {
+    return replay.game_teams.reduce((acc: PlayerState[], team) => {
+      const teamPlayers = team.game_entities
+        .filter((entity) => entity.player)
+        .map((entity) => ({
+          ...entity,
+          game_entity_states: null,
+        }))
+      return [...acc, ...teamPlayers]
+    }, [])
+  }, [replay])
+
   const activeStates = useMemo(() => {
-    const states: (
-      | (ReplayData['game_teams'][0]['game_entities'][0]['game_entity_states'][0] & {
-          playerId: number
-        })
-      | undefined
-    )[] = []
-    replay.game_teams.forEach((team) => {
-      team.game_entities.forEach((player) => {
-        const data = player.game_entity_states
+    const states: (ExtendedGameEntityState | null)[] = allPlayers.map(
+      (player) => {
+        const data = allStates
           .filter((state) => state.state_time <= elapsedTime * 1000)
+          .filter((state) => state.playerId === player.ipl_id)
           .pop()
+
         if (data) {
-          states.push({ ...data, playerId: player.ipl_id })
+          return { ...data, playerId: player.ipl_id }
         }
-      })
-    })
+        return null
+      }
+    )
     return states
-  }, [elapsedTime, replay])
+  }, [elapsedTime, allPlayers])
+
+  const latestState = useMemo(
+    (): number => allStates[allStates.length - 1]?.state_time ?? 0,
+    [allStates]
+  )
+
+  const latestActiveState = useMemo((): number => {
+    let latest = 0
+    activeStates.forEach((state) => {
+      if (state?.state_time > latest) {
+        latest = state?.state_time
+      }
+    })
+    return latest
+  }, [activeStates])
+
+  useEffect(() => {
+    if (latestState && elapsedTime && latestState < elapsedTime) {
+      setIsRunning(false)
+      window.alert('Loading additional entity states')
+    }
+  }, [latestState, elapsedTime])
 
   const refreshData = () => {
     router.replace(window.location.pathname)
   }
 
-  console.log({ activeStates })
+  console.log({
+    latestState,
+    latestActiveState,
+    allStates,
+    allPlayers,
+    activeStates,
+  })
 
   return (
     <div>
@@ -205,14 +272,23 @@ export default function ReplayView({ replay }: Props) {
                               <PositionIcon position={entity.position} />
                             </Box>
                             <Box px={1}>
-                              <Heading
-                                size="sm"
-                                color={`${team.ui_color}.600`}
-                                isTruncated
-                              >
-                                {entity.entity_desc}(
-                                {millisToMinutesAndSeconds(state?.state_time)})
-                              </Heading>
+                              <Flex>
+                                <Heading
+                                  size="sm"
+                                  color={`${team.ui_color}.600`}
+                                  isTruncated
+                                >
+                                  {entity.entity_desc}(
+                                  {millisToMinutesAndSeconds(state?.state_time)}
+                                  )
+                                </Heading>
+                                {/* TODO: vertical center this dammit! */}
+                                <Center>
+                                  <BsCircleFill
+                                    color={state?.is_active ? 'green' : 'red'}
+                                  />
+                                </Center>
+                              </Flex>
                             </Box>
                             <Spacer />
                             <Box
@@ -227,7 +303,15 @@ export default function ReplayView({ replay }: Props) {
                                   value={state?.score || 0}
                                   name="Score"
                                 />
-                                <StatDisplay value="N/A" name="MVP" />
+                                {/* <StatDisplay value="N/A" name="MVP" /> */}
+                                <StatDisplay
+                                  value={state?.lives || 0}
+                                  name="Lives"
+                                />{' '}
+                                <StatDisplay
+                                  value={state?.shots || 0}
+                                  name="Shots"
+                                />
                               </StatGroup>
                             </Box>
                             <Box

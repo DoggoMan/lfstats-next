@@ -1,7 +1,17 @@
 import type { AppProps } from 'next/app'
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import NextLink from 'next/link'
-import { Box, Heading, Link, Text } from '@chakra-ui/react'
+import {
+  Box,
+  Center,
+  ChakraProvider,
+  extendTheme,
+  Heading,
+  IconButton,
+  Link,
+  Text,
+  Spacer,
+} from '@chakra-ui/react'
+import { IoMdHome } from 'react-icons/io'
 
 const theme = extendTheme({
   colors: {
@@ -12,16 +22,29 @@ const theme = extendTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <div>
-        <NextLink href={'/'}>
+      <Box bgColor={'brand'}>
+        <Center h="56px">
+          <NextLink href={'/'}>
+            <Link>
+              <IconButton
+                aria-label={'Home'}
+                as={IoMdHome}
+                boxSize={6}
+                variant={'link'}
+                color={'white'}
+              />
+            </Link>
+          </NextLink>
+          <Spacer />
+        </Center>
+        {/* <NextLink href={'/'}>
           <Link>
-            {/* REVIEW: this heading looks horrible, please help. Also the underline doesn't get colored */}
             <Heading color="brand" textAlign={'center'}>
               LFStats
             </Heading>
           </Link>
-        </NextLink>
-      </div>
+        </NextLink> */}
+      </Box>
       <Component {...pageProps} />
     </ChakraProvider>
   )

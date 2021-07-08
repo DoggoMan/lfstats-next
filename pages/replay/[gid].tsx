@@ -63,6 +63,10 @@ export default function ReplayView({ replay }: Props) {
 
   const loadMoreStates = useCallback(async () => {
     setIsRunning(false);
+    if (replay.mission_length <= elapsedTime * 1000) {
+      console.log(`Aborted more states request as mission is finished!`);
+      return;
+    }
     // Maybe set some loading useState to true for the duration of this call? at least we can indicate it to user then
     const sec = Math.floor(elapsedTime);
     console.log(`Requesting more states at time ${sec}`);
@@ -91,7 +95,7 @@ export default function ReplayView({ replay }: Props) {
       setIsRunning(true);
       return [...prev, ...newStates];
     });
-  }, [elapsedTime]);
+  }, [elapsedTime, replay, elapsedTime]);
 
   const allStates: ExtendedGameEntityState[] = useMemo(() => {
     const initialStates = replay.game_teams.reduce(

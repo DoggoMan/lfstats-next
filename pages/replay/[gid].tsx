@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState, forwardRef } from 'react'
-import Head from 'next/head'
-import FlipMove from 'react-flip-move'
+import { useEffect, useMemo, useState, forwardRef } from "react";
+import Head from "next/head";
+import FlipMove from "react-flip-move";
 
 import {
   Accordion,
@@ -12,37 +12,37 @@ import {
   Link,
   Spacer,
   Text,
-} from '@chakra-ui/react'
+} from "@chakra-ui/react";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   RepeatClockIcon,
-} from '@chakra-ui/icons'
-import { millisToMinutesAndSeconds } from '../../lib/helper'
-import { getReplayData, ReplayData } from '../../lib/replay'
-import { useTimer } from '../../lib/stopwatch'
-import { PlayerProps, PlayerState } from '../../components/PlayerState'
-import { GameEntity, GameEntityState } from '../../lib/game'
+} from "@chakra-ui/icons";
+import { millisToMinutesAndSeconds } from "../../lib/helper";
+import { getReplayData, ReplayData } from "../../lib/replay";
+import { useTimer } from "../../lib/stopwatch";
+import { PlayerProps, PlayerState } from "../../components/PlayerState";
+import { GameEntity, GameEntityState } from "../../lib/game";
 
 type ExtendedGameEntityState = GameEntityState & {
-  playerId: number
-}
+  playerId: number;
+};
 
-type Player = Omit<GameEntity, 'game_entity_states'>
+type Player = Omit<GameEntity, "game_entity_states">;
 
 const FlippablePlayerState = forwardRef((props: PlayerProps, ref) => (
   <div ref={ref as any}>
     <PlayerState {...props} />
   </div>
-))
+));
 
 interface Props {
-  replay: ReplayData
+  replay: ReplayData;
 }
 
 export default function ReplayView({ replay }: Props) {
-  const { isRunning, setIsRunning, elapsedTime, setElapsedTime } = useTimer()
-  const missionStart = new Date(replay.mission_start)
+  const { isRunning, setIsRunning, elapsedTime, setElapsedTime } = useTimer();
+  const missionStart = new Date(replay.mission_start);
 
   // TODO: automatically fetch additional game_entity_states when the time is updated
   // TODO: automatically pause the clock when we run out of additional entity_states to show - 'bufferring'
@@ -52,18 +52,19 @@ export default function ReplayView({ replay }: Props) {
     return replay.game_teams.reduce((acc: ExtendedGameEntityState[], team) => {
       const teamEntityStates = team.game_entities.reduce(
         (acc: ExtendedGameEntityState[], player) => {
-          const playerEntityStates = player.game_entity_states.map((state) => ({
-            ...state,
-            playerId: player.ipl_id,
-          }))
-          return [...acc, ...playerEntityStates]
+          const playerEntityStates =
+            player.game_entity_states?.map((state) => ({
+              ...state,
+              playerId: player.ipl_id,
+            })) ?? [];
+          return [...acc, ...playerEntityStates];
         },
         []
-      )
+      );
 
-      return [...acc, ...teamEntityStates]
-    }, [])
-  }, [replay])
+      return [...acc, ...teamEntityStates];
+    }, []);
+  }, [replay]);
 
   const allPlayers = useMemo(() => {
     return replay.game_teams.reduce((acc: Player[], team) => {
@@ -72,10 +73,10 @@ export default function ReplayView({ replay }: Props) {
         .map((entity) => ({
           ...entity,
           game_entity_states: null,
-        }))
-      return [...acc, ...teamPlayers]
-    }, [])
-  }, [replay])
+        }));
+      return [...acc, ...teamPlayers];
+    }, []);
+  }, [replay]);
 
   const activeStates = useMemo(() => {
     const states: (ExtendedGameEntityState | null)[] = allPlayers.map(
@@ -83,23 +84,23 @@ export default function ReplayView({ replay }: Props) {
         const data = allStates
           .filter((state) => state.state_time <= elapsedTime * 1000)
           .filter((state) => state.playerId === player.ipl_id)
-          .pop()
+          .pop();
 
         if (data) {
-          return { ...data, playerId: player.ipl_id }
+          return { ...data, playerId: player.ipl_id };
         }
         // This is actually quite annoying. It may be worth implementing a dummy initial player state generator
         // just to avoid returning null here sometimes
-        return null
+        return null;
       }
-    )
-    return states
-  }, [elapsedTime, allPlayers])
+    );
+    return states;
+  }, [elapsedTime, allPlayers]);
 
   const latestState = useMemo(
     (): number => allStates[allStates.length - 1]?.state_time ?? 0,
     [allStates]
-  )
+  );
 
   //   const latestActiveState = useMemo((): number => {
   //     let latest = 0
@@ -121,16 +122,16 @@ export default function ReplayView({ replay }: Props) {
             ?.score || 0),
         0
       ),
-    }))
-    return scores
-  }, [activeStates, replay])
+    }));
+    return scores;
+  }, [activeStates, replay]);
 
   useEffect(() => {
     if (latestState && elapsedTime && latestState < elapsedTime * 1000) {
-      setIsRunning(false)
-      window.alert('Loading additional entity states')
+      setIsRunning(false);
+      window.alert("Loading additional entity states");
     }
-  }, [latestState, elapsedTime])
+  }, [latestState, elapsedTime]);
 
   //   console.log({
   //     latestState,
@@ -147,7 +148,7 @@ export default function ReplayView({ replay }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box justifyContent="center" paddingTop="70" px={4}>
-        <Box maxW="2xl" key={'game header'} p={2} my={4} mx="auto">
+        <Box maxW="2xl" key={"game header"} p={2} my={4} mx="auto">
           <Flex>
             <Heading>
               Game at {missionStart.getHours()}:{missionStart.getMinutes()}
@@ -161,7 +162,7 @@ export default function ReplayView({ replay }: Props) {
           borderWidth="1px"
           borderRadius="md"
           boxShadow="base"
-          key={'states loaded'}
+          key={"states loaded"}
           p={2}
           my={4}
           borderColor={`green.400`}
@@ -171,11 +172,11 @@ export default function ReplayView({ replay }: Props) {
             (acc, team) =>
               acc +
               team.game_entities.reduce(
-                (entAcc, ent) => entAcc + ent.game_entity_states.length,
+                (entAcc, ent) => entAcc + (ent.game_entity_states?.length ?? 0),
                 0
               ),
             0
-          )}{' '}
+          )}{" "}
           Entity States Loaded
         </Box>
         <Box
@@ -183,7 +184,7 @@ export default function ReplayView({ replay }: Props) {
           borderWidth="1px"
           borderRadius="md"
           boxShadow="base"
-          key={'time'}
+          key={"time"}
           p={2}
           my={4}
           borderColor={`green.400`}
@@ -195,17 +196,17 @@ export default function ReplayView({ replay }: Props) {
             </Text>
             <Spacer />
             <IconButton
-              aria-label={'Restart'}
+              aria-label={"Restart"}
               icon={<RepeatClockIcon />}
               colorScheme="blue"
               onClick={() => {
-                setIsRunning(false)
-                setElapsedTime(0)
+                setIsRunning(false);
+                setElapsedTime(0);
               }}
             />
             <IconButton
-              aria-label={'Rewind'}
-              variant={'outline'}
+              aria-label={"Rewind"}
+              variant={"outline"}
               icon={<ArrowLeftIcon boxSize={3} />}
               colorScheme="blue"
               onClick={() => setElapsedTime(Math.max(0, elapsedTime - 30))}
@@ -213,7 +214,7 @@ export default function ReplayView({ replay }: Props) {
             {isRunning ? (
               <Button
                 colorScheme="blue"
-                variant={'outline'}
+                variant={"outline"}
                 onClick={() => setIsRunning(false)}
               >
                 Pause
@@ -221,17 +222,17 @@ export default function ReplayView({ replay }: Props) {
             ) : (
               <Button
                 colorScheme="blue"
-                variant={'solid'}
+                variant={"solid"}
                 onClick={() => setIsRunning(true)}
               >
-                {elapsedTime === 0 ? 'Start' : 'Play'}
+                {elapsedTime === 0 ? "Start" : "Play"}
               </Button>
             )}
             <IconButton
-              aria-label={'Fast Forward'}
+              aria-label={"Fast Forward"}
               icon={<ArrowRightIcon boxSize={3} />}
               colorScheme="blue"
-              variant={'outline'}
+              variant={"outline"}
               onClick={() =>
                 setElapsedTime(Math.min(15 * 60, elapsedTime + 30))
               }
@@ -244,22 +245,22 @@ export default function ReplayView({ replay }: Props) {
         <FlipMove>
           {replay.game_teams
             .filter(
-              ({ team_desc }: { team_desc: string }) => team_desc !== 'Neutral'
+              ({ team_desc }: { team_desc: string }) => team_desc !== "Neutral"
             )
             .sort((firstTeam, secondTeam) => {
               const firstTeamScore =
                 teamScores.find((team) => team?.team === firstTeam.team_desc)
-                  ?.score ?? 0
+                  ?.score ?? 0;
 
               const secondTeamScore =
                 teamScores.find((team) => team?.team === secondTeam.team_desc)
-                  ?.score ?? 0
-              return secondTeamScore - firstTeamScore
+                  ?.score ?? 0;
+              return secondTeamScore - firstTeamScore;
             })
             .map((team) => {
               const teamData = teamScores.find(
                 (tScore) => tScore.team === team.team_desc
-              )
+              );
               return (
                 <div key={team.team_index}>
                   <Box
@@ -288,22 +289,22 @@ export default function ReplayView({ replay }: Props) {
                         {team.game_entities
                           .filter(
                             ({ entity_type }: { entity_type: string }) =>
-                              entity_type === 'player'
+                              entity_type === "player"
                           )
                           .sort((firstEntity, secondEntity) => {
                             const firstEntityScore = activeStates.find(
                               (state) => state?.playerId === firstEntity.ipl_id
-                            )?.score
+                            )?.score;
                             const secondEntityScore = activeStates.find(
                               (state) => state?.playerId === secondEntity.ipl_id
-                            )?.score
-                            return secondEntityScore - firstEntityScore
+                            )?.score;
+                            return secondEntityScore - firstEntityScore;
                           })
                           .map((entity) => {
                             const state =
                               activeStates.find(
                                 (state) => state?.playerId === entity.ipl_id
-                              ) ?? null
+                              ) ?? null;
                             return (
                               <FlippablePlayerState
                                 team={team}
@@ -311,27 +312,27 @@ export default function ReplayView({ replay }: Props) {
                                 state={state}
                                 key={entity.id}
                               />
-                            )
+                            );
                           })}
                       </FlipMove>
                     </Accordion>
                   </Box>
                 </div>
-              )
+              );
             })}
         </FlipMove>
       </Box>
     </div>
-  )
+  );
 }
 
 export async function getServerSideProps(context: any) {
-  const gameId = context.params.gid
-  const data = await getReplayData(gameId)
+  const gameId = context.params.gid;
+  const data = await getReplayData(gameId);
 
   return {
     props: {
       replay: data,
     },
-  }
+  };
 }

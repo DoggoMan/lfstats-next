@@ -1,5 +1,5 @@
-import type { AppProps } from 'next/app'
-import NextLink from 'next/link'
+import type { AppProps } from "next/app";
+import NextLink from "next/link";
 import {
   Box,
   Center,
@@ -10,28 +10,28 @@ import {
   Link,
   Text,
   Spacer,
-} from '@chakra-ui/react'
-import { IoMdHome } from 'react-icons/io'
+} from "@chakra-ui/react";
+import { IoMdHome } from "react-icons/io";
 
 const theme = extendTheme({
   colors: {
-    brand: '#1474ab',
+    brand: "#1474ab",
   },
-})
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <Box bgColor={'brand'}>
+      <Box bgColor={"brand"}>
         <Center h="56px">
-          <NextLink href={'/'}>
+          <NextLink href={"/"}>
             <Link>
               <IconButton
-                aria-label={'Home'}
+                aria-label={"Home"}
                 as={IoMdHome}
                 boxSize={6}
-                variant={'link'}
-                color={'white'}
+                variant={"link"}
+                color={"white"}
               />
             </Link>
           </NextLink>
@@ -47,7 +47,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Box>
       <Component {...pageProps} />
     </ChakraProvider>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;

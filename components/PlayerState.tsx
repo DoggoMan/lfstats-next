@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC } from "react";
 import {
   AccordionItem,
   AccordionButton,
@@ -12,29 +12,29 @@ import {
   AccordionPanel,
   SimpleGrid,
   Accordion,
-} from '@chakra-ui/react'
-import { BsCircleFill } from 'react-icons/bs'
-import { millisToMinutesAndSeconds } from '../lib/helper'
-import { PositionIcon } from './PositionIcon'
-import { StatDisplay } from './StatDisplay'
-import { useEffect } from 'react'
-import { GameEntity, GameEntityState, GameTeam } from '../lib/game'
+} from "@chakra-ui/react";
+import { BsCircleFill } from "react-icons/bs";
+import { millisToMinutesAndSeconds } from "../lib/helper";
+import { PositionIcon } from "./PositionIcon";
+import { StatDisplay } from "./StatDisplay";
+import { useEffect } from "react";
+import { GameEntity, GameEntityState, GameTeam } from "../lib/game";
 
 export interface PlayerProps {
-  team: GameTeam
-  entity: Omit<GameEntity, 'game_entity_states'>
-  state: GameEntityState | null
+  team: GameTeam;
+  entity: Omit<GameEntity, "game_entity_states">;
+  state: GameEntityState | null;
 }
 
 export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
   useEffect(() => {
-    console.log(`Mounted playerState for ${entity.entity_desc}`)
-  }, [])
+    console.log(`Mounted playerState for ${entity.entity_desc}`);
+  }, []);
 
   useEffect(() => {
     //   NOTE: useful for investigating how often this recomputes, but quite noisy
     //     console.log(`Updated playerState for ${entity.entity_desc}`)
-  }, [state])
+  }, [state]);
 
   return (
     <AccordionItem>
@@ -53,10 +53,10 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                 <BsCircleFill
                   color={
                     state?.is_active ?? true
-                      ? 'green'
-                      : state?.last_deac_type === 'resupply'
-                      ? 'yellow'
-                      : 'red'
+                      ? "green"
+                      : state?.last_deac_type === "resupply"
+                      ? "yellow"
+                      : "red"
                   }
                 />
               </Center>
@@ -66,8 +66,8 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
           <Box
             px={1}
             display={{
-              base: 'none',
-              sm: 'contents',
+              base: "none",
+              sm: "contents",
             }}
           >
             <StatGroup>
@@ -77,15 +77,15 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                 name="Spec"
               />
               {/* <StatDisplay value="N/A" name="MVP" /> */}
-              <StatDisplay value={state?.lives || 0} name="Lives" />{' '}
+              <StatDisplay value={state?.lives || 0} name="Lives" />{" "}
               <StatDisplay value={state?.shots || 0} name="Shots" />
             </StatGroup>
           </Box>
           <Box
             px={1}
             display={{
-              base: 'contents',
-              sm: 'none',
+              base: "contents",
+              sm: "none",
             }}
           >
             {state?.score || 0}
@@ -101,15 +101,15 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
             <SimpleGrid minChildWidth="120px">
               <Box
                 display={{
-                  base: 'contents',
-                  sm: 'none',
+                  base: "contents",
+                  sm: "none",
                 }}
               >
                 <StatDisplay value={state.score} name="Score" />
                 <StatDisplay value="N/A" name="MVP" />
               </Box>
               <StatDisplay
-                value={(state.accuracy * 100).toFixed(2) + '%'}
+                value={(state.accuracy * 100).toFixed(2) + "%"}
                 name="Accuracy"
               />
               <StatDisplay name="Hit Diff" value={state.hit_diff.toFixed(2)} />
@@ -145,7 +145,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
               {state.self_missile > 0 && (
                 <StatDisplay name="Times Missiled" value={state.self_missile} />
               )}
-              {entity.position !== 'Heavy Weapons' && (
+              {entity.position !== "Heavy Weapons" && (
                 <>
                   <StatDisplay name="SP Earned" value={state.sp_earned} />
                   <StatDisplay name="SP Spent" value={state.sp_spent} />
@@ -198,7 +198,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                 </h1>
                 <AccordionPanel>
                   <SimpleGrid minChildWidth="120px">
-                    {entity.position === 'Ammo Carrier' && (
+                    {entity.position === "Ammo Carrier" && (
                       <>
                         <StatDisplay
                           name="Players Resupplied (Shots)"
@@ -214,7 +214,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                         />
                       </>
                     )}
-                    {entity.position === 'Medic' && (
+                    {entity.position === "Medic" && (
                       <>
                         <StatDisplay
                           name="Players Resupplied (Lives)"
@@ -230,7 +230,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                         />
                       </>
                     )}
-                    {entity.position !== 'Ammo Carrier' && (
+                    {entity.position !== "Ammo Carrier" && (
                       <>
                         <StatDisplay
                           name="Ammo Resupplies"
@@ -242,7 +242,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                         />
                       </>
                     )}
-                    {entity.position !== 'Medic' && (
+                    {entity.position !== "Medic" && (
                       <>
                         <StatDisplay
                           name="Lives Resupplies"
@@ -257,7 +257,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                   </SimpleGrid>
                 </AccordionPanel>
               </AccordionItem>
-              {entity.position === 'Scout' && (
+              {entity.position === "Scout" && (
                 <AccordionItem>
                   <h1>
                     <AccordionButton>
@@ -277,7 +277,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                       <StatDisplay
                         name="Accuracy"
                         value={
-                          (state.accuracy_during_rapid * 100).toFixed(2) + '%'
+                          (state.accuracy_during_rapid * 100).toFixed(2) + "%"
                         }
                       />
                       <StatDisplay
@@ -340,8 +340,8 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                   </AccordionPanel>
                 </AccordionItem>
               )}
-              {(entity.position === 'Heavy Weapons' ||
-                entity.position === 'Commander') && (
+              {(entity.position === "Heavy Weapons" ||
+                entity.position === "Commander") && (
                 <AccordionItem>
                   <h1>
                     <AccordionButton>
@@ -375,7 +375,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                   </AccordionPanel>
                 </AccordionItem>
               )}
-              {entity.position === 'Commander' && (
+              {entity.position === "Commander" && (
                 <AccordionItem>
                   <h1>
                     <AccordionButton>
@@ -522,5 +522,5 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
         )}
       </AccordionPanel>
     </AccordionItem>
-  )
-}
+  );
+};

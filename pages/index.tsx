@@ -1,6 +1,6 @@
-import Head from 'next/head'
-import NextLink from 'next/link'
-import { Box, Heading, Link, UnorderedList, ListItem } from '@chakra-ui/react'
+import Head from "next/head";
+import NextLink from "next/link";
+import { Box, Heading, Link, UnorderedList, ListItem } from "@chakra-ui/react";
 
 export default function Homepage() {
   return (
@@ -25,12 +25,12 @@ export default function Homepage() {
           </Heading>
           <UnorderedList>
             <ListItem>
-              <NextLink href={'/game/1'}>
+              <NextLink href={"/game/1"}>
                 <Link>View Example Game</Link>
               </NextLink>
             </ListItem>
             <ListItem>
-              <NextLink href={'/replay/1'}>
+              <NextLink href={"/replay/1"}>
                 <Link>View Example Replay</Link>
               </NextLink>
             </ListItem>
@@ -38,7 +38,5 @@ export default function Homepage() {
         </Box>
       </Box>
     </div>
-  )
-
-              
+  );
 }

@@ -1,13 +1,13 @@
-import { gql } from '@apollo/client'
-import client from './apollo-client'
-import { GameData } from './game'
+import { gql } from "@apollo/client";
+import client from "./apollo-client";
+import { GameData } from "./game";
 
 // export interface ReplayData {
 //   id: number
 //   center: { name: string }
 // }
 
-export type ReplayData = GameData
+export type ReplayData = GameData;
 
 // Note we only load the game_entity_states for the next 60 seconds of the game
 // replayTime should be given in seconds. If no replayTime is given, default to 0.
@@ -15,8 +15,8 @@ export async function getReplayData(
   id: number,
   replayTime = 0
 ): Promise<ReplayData> {
-  const earliestTime = replayTime * 1000
-  const latestTime = (replayTime + 60) * 1000
+  const earliestTime = replayTime * 1000;
+  const latestTime = (replayTime + 60) * 1000;
   const { data } = await client.query({
     query: gql`
       query Replay($id: bigint!, $earliestTime: Int!, $latestTime: Int!) {
@@ -151,7 +151,7 @@ export async function getReplayData(
       }
     `,
     variables: { id, earliestTime, latestTime },
-  })
+  });
 
-  return data.game
+  return data.game;
 }

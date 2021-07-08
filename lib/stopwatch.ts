@@ -4,11 +4,18 @@ export const useTimer = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
 
+  // This is a completely unnecessary feature
+  const timeMultipliers = [1, 2, 5, 10, 0.5];
+  const [timeScale, setTimeScale] = useState(timeMultipliers[0]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isRunning) {
       interval = setInterval(
-        () => setElapsedTime((prevElapsedTime) => prevElapsedTime + 0.1),
+        () =>
+          setElapsedTime(
+            (prevElapsedTime) => prevElapsedTime + 0.1 * timeScale
+          ),
         100
       );
     }
@@ -17,7 +24,7 @@ export const useTimer = () => {
         clearInterval(interval);
       }
     };
-  }, [isRunning]);
+  }, [isRunning, timeScale]);
 
   // Max game length is 15 minutes. If the clock exceeds this, we should automatically clamp the value.
   // We might as well clamp the bottom too, to prevent a negative time value.
@@ -37,6 +44,14 @@ export const useTimer = () => {
     setIsRunning,
     elapsedTime,
     setElapsedTime,
+    timeScale,
+    updateTimeScale: () =>
+      setTimeScale((prev) => {
+        const prevMultiplierIndex = timeMultipliers.indexOf(prev);
+        const newMultiplierIndex =
+          (prevMultiplierIndex + 1) % timeMultipliers.length;
+        return timeMultipliers[newMultiplierIndex];
+      }),
   };
 };
 

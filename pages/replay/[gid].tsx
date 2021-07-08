@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, forwardRef } from "react";
+import { useEffect, useMemo, useState, forwardRef, useCallback } from "react";
 import Head from "next/head";
 import FlipMove from "react-flip-move";
 
@@ -17,6 +17,7 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   RepeatClockIcon,
+  SettingsIcon,
 } from "@chakra-ui/icons";
 import { millisToMinutesAndSeconds } from "../../lib/helper";
 import { getReplayData, ReplayData } from "../../lib/replay";
@@ -45,31 +46,80 @@ interface Props {
   replay: ReplayData;
 }
 
+// TODO: investigate very poor accordion performance (open/close) while timer is running
 export default function ReplayView({ replay }: Props) {
-  const { isRunning, setIsRunning, elapsedTime, setElapsedTime } = useTimer();
-  const missionStart = new Date(replay.mission_start);
+  const missionStart = new Date(replay?.mission_start);
 
-  // TODO: automatically fetch additional game_entity_states when the time is updated
-  // TODO: automatically pause the clock when we run out of additional entity_states to show - 'bufferring'
-  // TODO: investigate very poor accordion performance (open/close) while timer is running
+  const {
+    isRunning,
+    setIsRunning,
+    elapsedTime,
+    setElapsedTime,
+    timeScale,
+    updateTimeScale,
+  } = useTimer();
 
-  const allStates: ExtendedGameEntityState[] = useMemo(() => {
-    return replay.game_teams.reduce((acc: ExtendedGameEntityState[], team) => {
-      const teamEntityStates = team.game_entities.reduce(
-        (acc: ExtendedGameEntityState[], player) => {
-          const playerEntityStates =
-            player.game_entity_states?.map((state) => ({
-              ...state,
-              playerId: player.ipl_id,
-            })) ?? [];
-          return [...acc, ...playerEntityStates];
+  const [extraStates, setExtraStates] = useState<ExtendedGameEntityState[]>([]);
+
+  const loadMoreStates = useCallback(async () => {
+    setIsRunning(false);
+    // Maybe set some loading useState to true for the duration of this call? at least we can indicate it to user then
+    const sec = Math.floor(elapsedTime);
+    console.log(`Requesting more states at time ${sec}`);
+    const more = await getReplayData(replay.id, sec);
+
+    setExtraStates((prev) => {
+      const newStates = more.game_teams.reduce(
+        (acc: ExtendedGameEntityState[], team) => {
+          const teamEntityStates = team.game_entities.reduce(
+            (acc: ExtendedGameEntityState[], player) => {
+              const playerEntityStates =
+                player.game_entity_states?.map((state) => ({
+                  ...state,
+                  playerId: player.ipl_id,
+                })) ?? [];
+              return [...acc, ...playerEntityStates];
+            },
+            []
+          );
+
+          return [...acc, ...teamEntityStates];
         },
         []
       );
+      console.log(`Received additional ${newStates.length} states`);
+      setIsRunning(true);
+      return [...prev, ...newStates];
+    });
+  }, [elapsedTime]);
 
-      return [...acc, ...teamEntityStates];
-    }, []);
-  }, [replay]);
+  const allStates: ExtendedGameEntityState[] = useMemo(() => {
+    const initialStates = replay.game_teams.reduce(
+      (acc: ExtendedGameEntityState[], team) => {
+        const teamEntityStates = team.game_entities.reduce(
+          (acc: ExtendedGameEntityState[], player) => {
+            const playerEntityStates =
+              player.game_entity_states?.map((state) => ({
+                ...state,
+                playerId: player.ipl_id,
+              })) ?? [];
+            return [...acc, ...playerEntityStates];
+          },
+          []
+        );
+
+        return [...acc, ...teamEntityStates];
+      },
+      []
+    );
+
+    return (
+      [...initialStates, ...extraStates]
+        .sort((a, b) => a.state_time - b.state_time)
+        // Deduplicate
+        .filter((item, i, all) => i === all.findIndex((e) => e.id === item.id))
+    );
+  }, [replay, extraStates]);
 
   const allPlayers = useMemo(() => {
     return replay.game_teams.reduce((acc: Player[], team) => {
@@ -131,20 +181,14 @@ export default function ReplayView({ replay }: Props) {
     return scores;
   }, [activeStates, replay]);
 
+  // automatically fetch additional game_entity_states when the time is updated
+  // Also, automatically pause the clock when we run out of additional entity_states to show
   useEffect(() => {
     if (latestState && elapsedTime && latestState < elapsedTime * 1000) {
-      setIsRunning(false);
-      window.alert("Loading additional entity states");
+      loadMoreStates();
+      // window.alert('Loading additional entity states')
     }
   }, [latestState, elapsedTime, setIsRunning]);
-
-  //   console.log({
-  //     latestState,
-  //     latestActiveState,
-  //     allStates,
-  //     allPlayers,
-  //     activeStates,
-  //   })
 
   return (
     <div>
@@ -156,7 +200,7 @@ export default function ReplayView({ replay }: Props) {
         <Box maxW="2xl" key={"game header"} p={2} my={4} mx="auto">
           <Flex>
             <Heading>
-              Game at {missionStart.getHours()}:{missionStart.getMinutes()}
+              Replay at {missionStart.getHours()}:{missionStart.getMinutes()}
             </Heading>
             {/* REVIEW: We can't even link to lfstats.com because the replay.id is not the lfstats game id :( */}
             {/* <Link href={`https://lfstats.com/games/view/${replay.id}`}></Link> */}
@@ -173,16 +217,20 @@ export default function ReplayView({ replay }: Props) {
           borderColor={`green.400`}
           mx="auto"
         >
-          {replay.game_teams.reduce(
-            (acc, team) =>
-              acc +
-              team.game_entities.reduce(
-                (entAcc, ent) => entAcc + (ent.game_entity_states?.length ?? 0),
-                0
-              ),
-            0
-          )}{" "}
-          Entity States Loaded
+          <Flex>
+            <Text alignSelf={"center"}>
+              {allStates.length} Entity States Loaded
+            </Text>
+            <Spacer />
+            <Text alignSelf={"center"}>[{timeScale}x]</Text>
+            <IconButton
+              aria-label={"Settings"}
+              icon={<SettingsIcon />}
+              colorScheme="blue"
+              size={"sm"}
+              onClick={updateTimeScale}
+            />
+          </Flex>
         </Box>
         <Box
           maxW="2xl"

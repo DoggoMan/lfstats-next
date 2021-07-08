@@ -416,7 +416,11 @@ export default async function chomper(
   // EventAchieve 0900
   // EventBaseAwarded 0B03
 
+  //initialize history with all our start states
   let stateHistory: EntityState[] = [];
+  /* for (let [, state] of currentState) {
+    stateHistory.push(_.cloneDeep(state));
+  }*/
 
   //Just an absolute shit show of naive code and duplication
   //However, it makes it clean to see exactly how each action is mutating state
@@ -1009,7 +1013,8 @@ export default async function chomper(
                 center_id,
                 file_version,
                 program_version,
-                chomper_version
+                chomper_version,
+                tdf_id
               )
             VALUES
               (
@@ -1022,7 +1027,8 @@ export default async function chomper(
                 ${centerRecord.id},
                 ${gameMetaData.fileVersion},
                 ${gameMetaData.programVersion},
-                ${gameMetaData.chomperVersion}
+                ${gameMetaData.chomperVersion},
+                ${tdfId}
               )
             RETURNING *
           `);

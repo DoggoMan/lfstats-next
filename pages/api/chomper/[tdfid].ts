@@ -418,9 +418,10 @@ export default async function chomper(
 
   //initialize history with all our start states
   let stateHistory: EntityState[] = [];
-  /* for (let [, state] of currentState) {
-    stateHistory.push(_.cloneDeep(state));
-  }*/
+  for (const [ipl_id, state] of currentState.entries()) {
+    let p = entities.get(ipl_id) as Entity;
+    if (p.type === "player") stateHistory.push(_.cloneDeep(state));
+  }
 
   //Just an absolute shit show of naive code and duplication
   //However, it makes it clean to see exactly how each action is mutating state

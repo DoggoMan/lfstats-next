@@ -29,7 +29,7 @@ export interface PlayerProps {
 export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
   useEffect(() => {
     console.log(`Mounted playerState for ${entity.entity_desc}`);
-  }, []);
+  }, [entity]);
 
   useEffect(() => {
     //   NOTE: useful for investigating how often this recomputes, but quite noisy

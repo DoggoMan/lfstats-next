@@ -30,11 +30,16 @@ type ExtendedGameEntityState = GameEntityState & {
 
 type Player = Omit<GameEntity, "game_entity_states">;
 
-const FlippablePlayerState = forwardRef((props: PlayerProps, ref) => (
-  <div ref={ref as any}>
-    <PlayerState {...props} />
-  </div>
-));
+const FlippablePlayerState = forwardRef(function FlippablePlayerState(
+  props: PlayerProps,
+  ref
+) {
+  return (
+    <div ref={ref as any}>
+      <PlayerState {...props} />
+    </div>
+  );
+});
 
 interface Props {
   replay: ReplayData;
@@ -95,7 +100,7 @@ export default function ReplayView({ replay }: Props) {
       }
     );
     return states;
-  }, [elapsedTime, allPlayers]);
+  }, [elapsedTime, allPlayers, allStates]);
 
   const latestState = useMemo(
     (): number => allStates[allStates.length - 1]?.state_time ?? 0,
@@ -131,7 +136,7 @@ export default function ReplayView({ replay }: Props) {
       setIsRunning(false);
       window.alert("Loading additional entity states");
     }
-  }, [latestState, elapsedTime]);
+  }, [latestState, elapsedTime, setIsRunning]);
 
   //   console.log({
   //     latestState,

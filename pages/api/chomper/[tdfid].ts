@@ -25,7 +25,10 @@ import {
   UIColors,
 } from "../../../lib/constants";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function chomper(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const tdfId = req.query.tdfid;
   const chomperVersion = "2.1.0";
   let gameId: number = 0;
@@ -1344,7 +1347,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   res.status(200).json({ name: `${tdfId} chomped successfully` });
   return;
-};
+}
 
 function calcUptime(state: EntityState, prevState: EntityState) {
   let timeDelta = state.stateTime - prevState.stateTime;

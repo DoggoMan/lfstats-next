@@ -12,6 +12,10 @@ import {
   Link,
   Spacer,
   Text,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
 } from "@chakra-ui/react";
 import {
   ArrowLeftIcon,
@@ -49,6 +53,7 @@ interface Props {
 // TODO: investigate very poor accordion performance (open/close) while timer is running
 export default function ReplayView({ replay }: Props) {
   const missionStart = new Date(replay?.mission_start);
+  const missionLength = Math.ceil(replay?.mission_length / 1000);
 
   const {
     isRunning,
@@ -60,16 +65,23 @@ export default function ReplayView({ replay }: Props) {
   } = useTimer();
 
   const [extraStates, setExtraStates] = useState<ExtendedGameEntityState[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [wasRunning, setWasRunning] = useState(false);
 
   const loadMoreStates = useCallback(async () => {
+    const initialRunningState = isRunning;
     setIsRunning(false);
     if (replay.mission_length <= elapsedTime * 1000) {
       console.log(`Aborted more states request as mission is finished!`);
       return;
     }
+    setLoading(true);
+
     // Maybe set some loading useState to true for the duration of this call? at least we can indicate it to user then
     const sec = Math.floor(elapsedTime);
-    console.log(`Requesting more states at time ${sec}`);
+    console.log(
+      `Requesting more states at time ${millisToMinutesAndSeconds(sec)}`
+    );
     const more = await getReplayData(replay.id, sec);
 
     setExtraStates((prev) => {
@@ -92,10 +104,11 @@ export default function ReplayView({ replay }: Props) {
         []
       );
       console.log(`Received additional ${newStates.length} states`);
-      setIsRunning(true);
+      setLoading(false);
+      setIsRunning(initialRunningState);
       return [...prev, ...newStates];
     });
-  }, [elapsedTime, replay, elapsedTime]);
+  }, [isRunning, elapsedTime, replay, elapsedTime]);
 
   const allStates: ExtendedGameEntityState[] = useMemo(() => {
     const initialStates = replay.game_teams.reduce(
@@ -161,15 +174,15 @@ export default function ReplayView({ replay }: Props) {
     [allStates]
   );
 
-  //   const latestActiveState = useMemo((): number => {
-  //     let latest = 0
-  //     activeStates.forEach((state) => {
-  //       if (state?.state_time > latest) {
-  //         latest = state?.state_time
-  //       }
-  //     })
-  //     return latest
-  //   }, [activeStates])
+  const latestActiveState = useMemo((): number => {
+    let latest = 0;
+    activeStates.forEach((state) => {
+      if (state?.state_time > latest) {
+        latest = state?.state_time;
+      }
+    });
+    return latest;
+  }, [activeStates]);
 
   const teamScores = useMemo(() => {
     const scores = replay.game_teams.map((team) => ({
@@ -188,11 +201,26 @@ export default function ReplayView({ replay }: Props) {
   // automatically fetch additional game_entity_states when the time is updated
   // Also, automatically pause the clock when we run out of additional entity_states to show
   useEffect(() => {
-    if (latestState && elapsedTime && latestState < elapsedTime * 1000) {
+    // States between now and 5 seconds in the future
+    const upcomingStates = allStates.filter(
+      (s) =>
+        s.state_time > elapsedTime * 1000 &&
+        s.state_time < (elapsedTime + 5 * timeScale) * 1000
+    );
+
+    const noUpcomingStates = upcomingStates.length === 0;
+
+    if (
+      !loading &&
+      latestState &&
+      elapsedTime &&
+      // latestState < elapsedTime * 1000
+      noUpcomingStates
+    ) {
       loadMoreStates();
       // window.alert('Loading additional entity states')
     }
-  }, [latestState, elapsedTime, setIsRunning]);
+  }, [allStates, loading, latestState, elapsedTime, setIsRunning]);
 
   return (
     <div>
@@ -251,6 +279,10 @@ export default function ReplayView({ replay }: Props) {
             <Text alignSelf="center">
               Current Time: {millisToMinutesAndSeconds(elapsedTime * 1000)}
             </Text>
+
+            {/* <Text alignSelf="center">
+              Last State: {millisToMinutesAndSeconds(latestActiveState)}
+            </Text> */}
             <Spacer />
             <IconButton
               aria-label={"Restart"}
@@ -263,12 +295,17 @@ export default function ReplayView({ replay }: Props) {
             />
             <IconButton
               aria-label={"Rewind"}
-              variant={"outline"}
               icon={<ArrowLeftIcon boxSize={3} />}
               colorScheme="blue"
+              variant={"outline"}
+              disabled={loading}
               onClick={() => setElapsedTime(Math.max(0, elapsedTime - 30))}
             />
-            {isRunning ? (
+            {loading ? (
+              <Button colorScheme="blue" variant={"outline"} disabled={true}>
+                Loading
+              </Button>
+            ) : isRunning ? (
               <Button
                 colorScheme="blue"
                 variant={"outline"}
@@ -290,10 +327,41 @@ export default function ReplayView({ replay }: Props) {
               icon={<ArrowRightIcon boxSize={3} />}
               colorScheme="blue"
               variant={"outline"}
+              disabled={loading}
               onClick={() =>
                 setElapsedTime(Math.min(15 * 60, elapsedTime + 30))
               }
             />
+          </Flex>
+          <Flex margin={2} marginBottom={0}>
+            <Slider
+              aria-label={"slider-game-time"}
+              defaultValue={0}
+              value={Math.floor(elapsedTime / 5) * 5 ?? 0}
+              min={0}
+              max={missionLength}
+              step={5}
+              onChangeEnd={(val) => {
+                // console.log(`changeEnd: ${val}`);
+                // Messy - restore the running state from when we started dragging
+                setIsRunning(wasRunning);
+              }}
+              onChangeStart={(val) => {
+                // console.log(`changeStart: ${val}`);
+                setWasRunning(isRunning);
+                setIsRunning(false);
+              }}
+              onChange={(val) => {
+                // console.log(`change: ${val}`);
+                setElapsedTime(val);
+              }}
+              focusThumbOnChange={false}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
           </Flex>
         </Box>
         {/* This works, although it does throw a warning

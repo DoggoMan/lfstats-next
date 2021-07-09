@@ -5,7 +5,7 @@ export const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   // This is a completely unnecessary feature
-  const timeMultipliers = [1, 2, 5, 10, 0.5];
+  const timeMultipliers = [1, 2, 5, 10, 15, 0.5];
   const [timeScale, setTimeScale] = useState(timeMultipliers[0]);
 
   useEffect(() => {

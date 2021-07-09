@@ -45,7 +45,14 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
           </Box>
           <Box px={1}>
             <Flex>
-              <Heading size="sm" color={`${team.ui_color}.600`} isTruncated>
+              <Heading
+                size="sm"
+                color={`${team.ui_color}.600`}
+                textDecoration={
+                  state?.is_eliminated ? "line-through" : undefined
+                }
+                isTruncated
+              >
                 {entity.entity_desc}(
                 {millisToMinutesAndSeconds(state?.state_time)})
               </Heading>

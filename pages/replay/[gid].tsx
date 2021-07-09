@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, forwardRef } from "react";
+import { useEffect, useMemo, useState, forwardRef, useCallback } from "react";
 import Head from "next/head";
 import FlipMove from "react-flip-move";
 
@@ -12,11 +12,16 @@ import {
   Link,
   Spacer,
   Text,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
 } from "@chakra-ui/react";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   RepeatClockIcon,
+  SettingsIcon,
 } from "@chakra-ui/icons";
 import { millisToMinutesAndSeconds } from "../../lib/helper";
 import { getReplayData, ReplayData } from "../../lib/replay";
@@ -45,31 +50,93 @@ interface Props {
   replay: ReplayData;
 }
 
+// TODO: investigate very poor accordion performance (open/close) while timer is running
 export default function ReplayView({ replay }: Props) {
-  const { isRunning, setIsRunning, elapsedTime, setElapsedTime } = useTimer();
-  const missionStart = new Date(replay.mission_start);
+  const missionStart = new Date(replay?.mission_start);
+  const missionLength = Math.ceil(replay?.mission_length / 1000);
 
-  // TODO: automatically fetch additional game_entity_states when the time is updated
-  // TODO: automatically pause the clock when we run out of additional entity_states to show - 'bufferring'
-  // TODO: investigate very poor accordion performance (open/close) while timer is running
+  const {
+    isRunning,
+    setIsRunning,
+    elapsedTime,
+    setElapsedTime,
+    timeScale,
+    updateTimeScale,
+  } = useTimer();
 
-  const allStates: ExtendedGameEntityState[] = useMemo(() => {
-    return replay.game_teams.reduce((acc: ExtendedGameEntityState[], team) => {
-      const teamEntityStates = team.game_entities.reduce(
-        (acc: ExtendedGameEntityState[], player) => {
-          const playerEntityStates =
-            player.game_entity_states?.map((state) => ({
-              ...state,
-              playerId: player.ipl_id,
-            })) ?? [];
-          return [...acc, ...playerEntityStates];
+  const [extraStates, setExtraStates] = useState<ExtendedGameEntityState[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [wasRunning, setWasRunning] = useState(false);
+
+  const loadMoreStates = useCallback(async () => {
+    const initialRunningState = isRunning;
+    setIsRunning(false);
+    if (replay.mission_length <= elapsedTime * 1000) {
+      console.log(`Aborted more states request as mission is finished!`);
+      return;
+    }
+    setLoading(true);
+
+    // Maybe set some loading useState to true for the duration of this call? at least we can indicate it to user then
+    const sec = Math.floor(elapsedTime);
+    console.log(
+      `Requesting more states at time ${millisToMinutesAndSeconds(sec)}`
+    );
+    const more = await getReplayData(replay.id, sec);
+
+    setExtraStates((prev) => {
+      const newStates = more.game_teams.reduce(
+        (acc: ExtendedGameEntityState[], team) => {
+          const teamEntityStates = team.game_entities.reduce(
+            (acc: ExtendedGameEntityState[], player) => {
+              const playerEntityStates =
+                player.game_entity_states?.map((state) => ({
+                  ...state,
+                  playerId: player.ipl_id,
+                })) ?? [];
+              return [...acc, ...playerEntityStates];
+            },
+            []
+          );
+
+          return [...acc, ...teamEntityStates];
         },
         []
       );
+      console.log(`Received additional ${newStates.length} states`);
+      setLoading(false);
+      setIsRunning(initialRunningState);
+      return [...prev, ...newStates];
+    });
+  }, [isRunning, elapsedTime, replay, elapsedTime]);
 
-      return [...acc, ...teamEntityStates];
-    }, []);
-  }, [replay]);
+  const allStates: ExtendedGameEntityState[] = useMemo(() => {
+    const initialStates = replay.game_teams.reduce(
+      (acc: ExtendedGameEntityState[], team) => {
+        const teamEntityStates = team.game_entities.reduce(
+          (acc: ExtendedGameEntityState[], player) => {
+            const playerEntityStates =
+              player.game_entity_states?.map((state) => ({
+                ...state,
+                playerId: player.ipl_id,
+              })) ?? [];
+            return [...acc, ...playerEntityStates];
+          },
+          []
+        );
+
+        return [...acc, ...teamEntityStates];
+      },
+      []
+    );
+
+    return (
+      [...initialStates, ...extraStates]
+        .sort((a, b) => a.state_time - b.state_time)
+        // Deduplicate
+        .filter((item, i, all) => i === all.findIndex((e) => e.id === item.id))
+    );
+  }, [replay, extraStates]);
 
   const allPlayers = useMemo(() => {
     return replay.game_teams.reduce((acc: Player[], team) => {
@@ -107,15 +174,15 @@ export default function ReplayView({ replay }: Props) {
     [allStates]
   );
 
-  //   const latestActiveState = useMemo((): number => {
-  //     let latest = 0
-  //     activeStates.forEach((state) => {
-  //       if (state?.state_time > latest) {
-  //         latest = state?.state_time
-  //       }
-  //     })
-  //     return latest
-  //   }, [activeStates])
+  const latestActiveState = useMemo((): number => {
+    let latest = 0;
+    activeStates.forEach((state) => {
+      if (state?.state_time > latest) {
+        latest = state?.state_time;
+      }
+    });
+    return latest;
+  }, [activeStates]);
 
   const teamScores = useMemo(() => {
     const scores = replay.game_teams.map((team) => ({
@@ -131,20 +198,29 @@ export default function ReplayView({ replay }: Props) {
     return scores;
   }, [activeStates, replay]);
 
+  // automatically fetch additional game_entity_states when the time is updated
+  // Also, automatically pause the clock when we run out of additional entity_states to show
   useEffect(() => {
-    if (latestState && elapsedTime && latestState < elapsedTime * 1000) {
-      setIsRunning(false);
-      window.alert("Loading additional entity states");
-    }
-  }, [latestState, elapsedTime, setIsRunning]);
+    // States between now and 5 seconds in the future
+    const upcomingStates = allStates.filter(
+      (s) =>
+        s.state_time > elapsedTime * 1000 &&
+        s.state_time < (elapsedTime + 5 * timeScale) * 1000
+    );
 
-  //   console.log({
-  //     latestState,
-  //     latestActiveState,
-  //     allStates,
-  //     allPlayers,
-  //     activeStates,
-  //   })
+    const noUpcomingStates = upcomingStates.length === 0;
+
+    if (
+      !loading &&
+      latestState &&
+      elapsedTime &&
+      // latestState < elapsedTime * 1000
+      noUpcomingStates
+    ) {
+      loadMoreStates();
+      // window.alert('Loading additional entity states')
+    }
+  }, [allStates, loading, latestState, elapsedTime, setIsRunning]);
 
   return (
     <div>
@@ -156,7 +232,7 @@ export default function ReplayView({ replay }: Props) {
         <Box maxW="2xl" key={"game header"} p={2} my={4} mx="auto">
           <Flex>
             <Heading>
-              Game at {missionStart.getHours()}:{missionStart.getMinutes()}
+              Replay at {missionStart.getHours()}:{missionStart.getMinutes()}
             </Heading>
             {/* REVIEW: We can't even link to lfstats.com because the replay.id is not the lfstats game id :( */}
             {/* <Link href={`https://lfstats.com/games/view/${replay.id}`}></Link> */}
@@ -173,16 +249,20 @@ export default function ReplayView({ replay }: Props) {
           borderColor={`green.400`}
           mx="auto"
         >
-          {replay.game_teams.reduce(
-            (acc, team) =>
-              acc +
-              team.game_entities.reduce(
-                (entAcc, ent) => entAcc + (ent.game_entity_states?.length ?? 0),
-                0
-              ),
-            0
-          )}{" "}
-          Entity States Loaded
+          <Flex>
+            <Text alignSelf={"center"}>
+              {allStates.length} Entity States Loaded
+            </Text>
+            <Spacer />
+            <Text alignSelf={"center"}>[{timeScale}x]</Text>
+            <IconButton
+              aria-label={"Settings"}
+              icon={<SettingsIcon />}
+              colorScheme="blue"
+              size={"sm"}
+              onClick={updateTimeScale}
+            />
+          </Flex>
         </Box>
         <Box
           maxW="2xl"
@@ -199,6 +279,10 @@ export default function ReplayView({ replay }: Props) {
             <Text alignSelf="center">
               Current Time: {millisToMinutesAndSeconds(elapsedTime * 1000)}
             </Text>
+
+            {/* <Text alignSelf="center">
+              Last State: {millisToMinutesAndSeconds(latestActiveState)}
+            </Text> */}
             <Spacer />
             <IconButton
               aria-label={"Restart"}
@@ -211,12 +295,17 @@ export default function ReplayView({ replay }: Props) {
             />
             <IconButton
               aria-label={"Rewind"}
-              variant={"outline"}
               icon={<ArrowLeftIcon boxSize={3} />}
               colorScheme="blue"
+              variant={"outline"}
+              disabled={loading}
               onClick={() => setElapsedTime(Math.max(0, elapsedTime - 30))}
             />
-            {isRunning ? (
+            {loading ? (
+              <Button colorScheme="blue" variant={"outline"} disabled={true}>
+                Loading
+              </Button>
+            ) : isRunning ? (
               <Button
                 colorScheme="blue"
                 variant={"outline"}
@@ -238,10 +327,41 @@ export default function ReplayView({ replay }: Props) {
               icon={<ArrowRightIcon boxSize={3} />}
               colorScheme="blue"
               variant={"outline"}
+              disabled={loading}
               onClick={() =>
                 setElapsedTime(Math.min(15 * 60, elapsedTime + 30))
               }
             />
+          </Flex>
+          <Flex margin={2} marginBottom={0}>
+            <Slider
+              aria-label={"slider-game-time"}
+              defaultValue={0}
+              value={Math.floor(elapsedTime / 5) * 5 ?? 0}
+              min={0}
+              max={missionLength}
+              step={5}
+              onChangeEnd={(val) => {
+                // console.log(`changeEnd: ${val}`);
+                // Messy - restore the running state from when we started dragging
+                setIsRunning(wasRunning);
+              }}
+              onChangeStart={(val) => {
+                // console.log(`changeStart: ${val}`);
+                setWasRunning(isRunning);
+                setIsRunning(false);
+              }}
+              onChange={(val) => {
+                // console.log(`change: ${val}`);
+                setElapsedTime(val);
+              }}
+              focusThumbOnChange={false}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
           </Flex>
         </Box>
         {/* This works, although it does throw a warning

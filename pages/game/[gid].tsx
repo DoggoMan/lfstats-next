@@ -28,12 +28,22 @@ interface Props {
 }
 
 export default function GameView({ game }: Props) {
+  const missionStart = new Date(game?.mission_start);
   return (
     <div>
       <Head>
         <title>LFStats - Game {game.id}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Box maxW="2xl" key={"game header"} p={2} my={4} mx="auto">
+        <Flex>
+          <Heading>
+            Game at {missionStart.getHours()}:{missionStart.getMinutes()}
+          </Heading>
+          {/* REVIEW: We can't even link to lfstats.com because the replay.id is not the lfstats game id :( */}
+          {/* <Link href={`https://lfstats.com/games/view/${replay.id}`}></Link> */}
+        </Flex>
+      </Box>
       <Box justifyContent="center" paddingTop="70" px={4}>
         {game.game_teams
           .filter(

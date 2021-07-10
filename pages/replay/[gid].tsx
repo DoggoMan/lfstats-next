@@ -108,7 +108,7 @@ export default function ReplayView({ replay }: Props) {
       setIsRunning(initialRunningState);
       return [...prev, ...newStates];
     });
-  }, [isRunning, elapsedTime, replay, elapsedTime]);
+  }, [isRunning, elapsedTime, replay, setIsRunning]);
 
   const allStates: ExtendedGameEntityState[] = useMemo(() => {
     const initialStates = replay.game_teams.reduce(
@@ -220,7 +220,15 @@ export default function ReplayView({ replay }: Props) {
       loadMoreStates();
       // window.alert('Loading additional entity states')
     }
-  }, [allStates, loading, latestState, elapsedTime, setIsRunning]);
+  }, [
+    allStates,
+    loading,
+    latestState,
+    elapsedTime,
+    timeScale,
+    setIsRunning,
+    loadMoreStates,
+  ]);
 
   return (
     <div>

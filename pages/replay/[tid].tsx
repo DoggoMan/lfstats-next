@@ -82,7 +82,7 @@ export default function ReplayView({ replay }: Props) {
     console.log(
       `Requesting more states at time ${millisToMinutesAndSeconds(sec)}`
     );
-    const more = await getReplayData(replay.id, sec);
+    const more = await getReplayData(replay.tdf_id, sec);
 
     setExtraStates((prev) => {
       const newStates = more.game_teams.reduce(

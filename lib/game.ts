@@ -123,6 +123,7 @@ export interface GameTeam {
 
 export interface GameData {
   id: number;
+  tdf_id: string;
   mission_start: number;
   mission_length: number;
   center: { name: string };

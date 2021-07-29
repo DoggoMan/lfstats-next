@@ -12,7 +12,7 @@ export type ReplayData = GameData;
 // Note we only load the game_entity_states for the next 60 seconds of the game
 // replayTime should be given in seconds. If no replayTime is given, default to 0.
 export async function getReplayData(
-  id: number,
+  id: string,
   replayTime = 0
 ): Promise<ReplayData> {
   const earliestTime = replayTime * 1000;

@@ -22,6 +22,7 @@ export async function getReplayData(
       query Replay($id: String!, $earliestTime: Int!, $latestTime: Int!) {
         game(where: { tdf_id: { _eq: $id } }) {
           id
+          tdf_id
           mission_start
           mission_length
           center {

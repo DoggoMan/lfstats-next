@@ -19,8 +19,8 @@ export async function getReplayData(
   const latestTime = (replayTime + 60) * 1000;
   const { data } = await client.query({
     query: gql`
-      query Replay($id: bigint!, $earliestTime: Int!, $latestTime: Int!) {
-        game: game_by_pk(id: $id) {
+      query Replay($id: String!, $earliestTime: Int!, $latestTime: Int!) {
+        game(where: { tdf_id: { _eq: $id } }) {
           id
           mission_start
           mission_length
@@ -153,5 +153,5 @@ export async function getReplayData(
     variables: { id, earliestTime, latestTime },
   });
 
-  return data.game;
+  return data.game[0];
 }

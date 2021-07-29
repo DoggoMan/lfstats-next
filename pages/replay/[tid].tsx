@@ -460,12 +460,21 @@ export default function ReplayView({ replay }: Props) {
 }
 
 export async function getServerSideProps(context: any) {
-  const gameId = context.params.gid;
-  const data = await getReplayData(gameId);
+  const tdfId = context.params.tid;
+  const data = await getReplayData(tdfId);
 
-  return {
-    props: {
-      replay: data,
-    },
-  };
+  if (data) {
+    return {
+      props: {
+        replay: data,
+      },
+    };
+  } else {
+    return {
+      redirect: {
+        destination: `/replay/build?tid=${tdfId}`,
+        permanent: false,
+      },
+    };
+  }
 }

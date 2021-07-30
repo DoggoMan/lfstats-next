@@ -95,10 +95,12 @@ export default async function chomper(
             missionDuration: record[4]
               ? (Math.round(parseInt(record[4]) / 1000) * 1000) / 1000
               : 900,
-            missionDurationMillis: parseInt(record?.[4]) ?? 900000,
+            missionDurationMillis:
+              typeof record[4] != "undefined" ? parseInt(record[4]) : 900000,
             missionLength: null,
             missionLengthMillis: null,
-            penaltyValue: parseInt(record?.[5]) ?? null,
+            penaltyValue:
+              typeof record[5] != "undefined" ? parseInt(record[5]) : null,
           } as Game;
         } else if (record[0] === "2") {
           //;2/team	index	desc	colour-enum	colour-desc

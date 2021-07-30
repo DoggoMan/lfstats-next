@@ -49,7 +49,7 @@ export default async function chomper(
     Bucket: "lfstats-scorecard-archive",
     Key: `${tdfId}.tdf`,
   });
-  console.log(tdfId);
+  console.log("CHOMP: READING " + tdfId);
 
   //object to store our resultsof parsing
   let game: Game;
@@ -201,8 +201,8 @@ export default async function chomper(
   } catch (error) {
     console.log("CHOMP: READ ERROR");
     const { requestId, cfId, extendedRequestId } = error.$metadata;
-    console.log({ requestId, cfId, extendedRequestId, error });
-    res.status(502).json({ name: "TDF Read Error" });
+    //console.log({ requestId, cfId, extendedRequestId, error });
+    res.status(500).json({ name: "TDF Read Error", error: error });
     return;
   }
 
@@ -1134,7 +1134,7 @@ export default async function chomper(
           let entity = entities.get(gameEntityRecord.ipl_id as string);
           if (entity) entity.lfstatsId = gameEntityRecord.id as number;
         }
-
+        console.log("start action insert");
         //insert the actions
         let chunkSize = 1000;
         for (let i = 0, len = actions.length; i < len; i += chunkSize) {
@@ -1162,7 +1162,7 @@ export default async function chomper(
             )
           `);
         }
-
+        console.log("start state insert");
         chunkSize = 500;
         for (let i = 0, len = stateHistory.length; i < len; i += chunkSize) {
           let chunk = stateHistory.slice(i, i + chunkSize);
@@ -1350,7 +1350,7 @@ export default async function chomper(
   } catch (error) {
     console.log("CHOMP2: DB ERROR");
     console.log(error.stack);
-    res.status(502).json({ name: `DB Error` });
+    res.status(500).json({ name: "Database Error", error: error });
     return;
   }
 

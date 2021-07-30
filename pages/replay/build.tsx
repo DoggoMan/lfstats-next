@@ -14,11 +14,20 @@ const fetcher = async (
   ...args: any[]
 ) => {
   const res = await fetch(input, init);
+  if (!res.ok) {
+    const error = new Error("An error occurred while fetching the data.");
+    throw error;
+  }
+
   return res.json();
 };
 
 export default function Build({ tdfId }: Props) {
-  const { data, error } = useSWR(`/api/chomper/${tdfId}`, fetcher);
+  const { data, error } = useSWR(`/api/chomper/${tdfId}`, fetcher, {
+    shouldRetryOnError: false,
+  });
+
+  if (error) return <div>Oh no, it exploded. Sorry.</div>;
 
   if (!data) {
     return (
@@ -29,11 +38,8 @@ export default function Build({ tdfId }: Props) {
         <CircularProgress isIndeterminate color="green.300" />
       </>
     );
-  }
-  if (error) {
-    return <div>Oh no, it exploded. Sorry.</div>;
-  }
-  if (data) {
+  } else if (data) {
+    console.log(`/replay/${tdfId}`);
     router.push(`/replay/${tdfId}`);
     return <div>Build complete, redirecting...</div>;
   }

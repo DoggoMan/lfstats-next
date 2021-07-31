@@ -1134,7 +1134,7 @@ export default async function chomper(
           let entity = entities.get(gameEntityRecord.ipl_id as string);
           if (entity) entity.lfstatsId = gameEntityRecord.id as number;
         }
-        console.log("start action insert");
+
         //insert the actions
         let chunkSize = 1000;
         for (let i = 0, len = actions.length; i < len; i += chunkSize) {
@@ -1162,7 +1162,7 @@ export default async function chomper(
             )
           `);
         }
-        console.log("start state insert");
+
         chunkSize = 500;
         for (let i = 0, len = stateHistory.length; i < len; i += chunkSize) {
           let chunk = stateHistory.slice(i, i + chunkSize);

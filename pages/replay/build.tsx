@@ -1,8 +1,6 @@
-import Head from "next/head";
 import useSWR from "swr";
-import { CircularProgress } from "@chakra-ui/react";
-import Router from "next/router";
-import router from "next/router";
+import { Box, Button, CircularProgress } from "@chakra-ui/react";
+import Link from "next/link";
 
 interface Props {
   tdfId: string;
@@ -31,17 +29,22 @@ export default function Build({ tdfId }: Props) {
 
   if (!data) {
     return (
-      <>
+      <Box justifyContent="center" paddingTop="70" px={4}>
         <div>
           Looks like we haven&apos;t built that game yet. Give me a second...
         </div>
         <CircularProgress isIndeterminate color="green.300" />
-      </>
+      </Box>
     );
   } else if (data) {
-    console.log(`/replay/${tdfId}`);
-    router.push(`/replay/${tdfId}`);
-    return <div>Build complete, redirecting...</div>;
+    return (
+      <Box justifyContent="center" paddingTop="70" px={4}>
+        <div>Build complete!</div>
+        <Link href={`/replay/${encodeURIComponent(tdfId)}`} passHref>
+          <Button colorScheme="green">Continue</Button>
+        </Link>
+      </Box>
+    );
   }
 }
 

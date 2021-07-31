@@ -29,7 +29,7 @@ export default function Build({ tdfId }: Props) {
 
   if (!data) {
     return (
-      <Box justifyContent="center" paddingTop="70" px={4}>
+      <Box justifyContent="center" px={4} maxW="2xl" mx="auto">
         <div>
           Looks like we haven&apos;t built that game yet. Give me a second...
         </div>
@@ -38,7 +38,7 @@ export default function Build({ tdfId }: Props) {
     );
   } else if (data) {
     return (
-      <Box justifyContent="center" paddingTop="70" px={4}>
+      <Box justifyContent="center" px={4} maxW="2xl" mx="auto">
         <div>Build complete!</div>
         <Link href={`/replay/${encodeURIComponent(tdfId)}`} passHref>
           <Button colorScheme="green">Continue</Button>

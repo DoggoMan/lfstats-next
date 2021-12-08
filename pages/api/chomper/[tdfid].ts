@@ -138,10 +138,10 @@ export default async function chomper(
 
           //set up initial numbers based on the entity type
           entity.initialState.ipl_id = entity.ipl_id;
-          entity.initialState.shots = entity.initialShots;
-          entity.initialState.lives = entity.initialLives;
-          entity.initialState.missilesLeft = entity.initialMissiles;
-          entity.initialState.currentHP = entity.maxHP;
+          entity.initialState.shots = entity.initialShots ?? 0;
+          entity.initialState.lives = entity.initialLives ?? 0;
+          entity.initialState.missilesLeft = entity.initialMissiles ?? 0;
+          entity.initialState.currentHP = entity.maxHP ?? 0;
 
           entities.set(entity.ipl_id, entity);
           currentState.set(entity.ipl_id, { ...entity.initialState });
@@ -198,7 +198,7 @@ export default async function chomper(
       });
       await once(rl, "close");
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log("CHOMP: READ ERROR");
     const { requestId, cfId, extendedRequestId } = error.$metadata;
     //console.log({ requestId, cfId, extendedRequestId, error });
@@ -784,6 +784,10 @@ export default async function chomper(
 
     // EventResupplyLives 0502
     if (action.type === "0502") {
+      if (player.type === "beacon") {
+        console.log(playerState);
+      }
+
       playerState.stateTime = action.time;
       playerState.shotsFired += 1;
       playerState.shotsHit += 1;
@@ -807,6 +811,9 @@ export default async function chomper(
         playerState.cancelTeamNuke += 1;
       }
 
+      if (player.type === "beacon") {
+        console.log(playerState);
+      }
       stateHistory.push(_.cloneDeep(calcUptime(playerState, prevPlayerState)));
       stateHistory.push(_.cloneDeep(calcUptime(targetState, prevTargetState)));
     }
@@ -1004,6 +1011,8 @@ export default async function chomper(
           return;
         }
 
+        console.log("CHOMP2 STATUS: Create Game Record");
+
         let gameRecord = await client.one(sql`
             INSERT INTO game 
               (
@@ -1036,6 +1045,8 @@ export default async function chomper(
             RETURNING *
           `);
         gameId = gameRecord.id as number;
+
+        console.log("CHOMP2 STATUS: Create Team Records");
 
         //on to the teams
         let gameTeamRecords = await client.many(sql`
@@ -1084,6 +1095,8 @@ export default async function chomper(
         }
         for (let [, entity] of entities)
           entity.gameTeamId = gameTeams[entity.team];
+
+        console.log("CHOMP2 STATUS: Create Entity Records");
 
         //now the entities
         let gameEntityRecords = await client.many(sql`
@@ -1135,6 +1148,8 @@ export default async function chomper(
           if (entity) entity.lfstatsId = gameEntityRecord.id as number;
         }
 
+        console.log("CHOMP2 STATUS: Create Action Records");
+
         //insert the actions
         let chunkSize = 1000;
         for (let i = 0, len = actions.length; i < len; i += chunkSize) {
@@ -1163,11 +1178,13 @@ export default async function chomper(
           `);
         }
 
+        console.log("CHOMP2 STATUS: Create State History Records");
+
         chunkSize = 500;
         for (let i = 0, len = stateHistory.length; i < len; i += chunkSize) {
           let chunk = stateHistory.slice(i, i + chunkSize);
-          //insert the state obejcts
-          await client.query(sql`
+
+          let query = sql`
           INSERT INTO game_entity_state
             (
               entity_id,
@@ -1343,11 +1360,14 @@ export default async function chomper(
               sql`), (`
             )}
           )
-        `);
+        `;
+
+          //insert the state obejcts
+          await client.query(query);
         }
       });
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log("CHOMP2: DB ERROR");
     console.log(error.stack);
     res.status(500).json({ name: "Database Error", error: error });

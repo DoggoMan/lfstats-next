@@ -9,6 +9,22 @@ import { GameData } from "./game";
 
 export type ReplayData = GameData;
 
+export async function ifReplayExists(tdfId: string): Promise<boolean> {
+  const { data } = await client.query({
+    query: gql`
+      query IfReplayExists($tdfID: String!) {
+        game(where: { tdf_id: { _eq: $tdfId } }) {
+          id
+        }
+      }
+    `,
+    variables: { tdfId },
+  });
+
+  if (data.game[0]) return true;
+  else return false;
+}
+
 // Note we only load the game_entity_states for the next 60 seconds of the game
 // replayTime should be given in seconds. If no replayTime is given, default to 0.
 export async function getReplayData(

@@ -784,10 +784,6 @@ export default async function chomper(
 
     // EventResupplyLives 0502
     if (action.type === "0502") {
-      if (player.type === "beacon") {
-        console.log(playerState);
-      }
-
       playerState.stateTime = action.time;
       playerState.shotsFired += 1;
       playerState.shotsHit += 1;

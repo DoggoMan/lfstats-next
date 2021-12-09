@@ -40,8 +40,8 @@ export default async function chomper(
   //then read line by line and load to the db
   const s3Client = new S3Client({
     credentials: {
-      accessKeyId: `${process.env.AWS_S3_ACCESS_KEY}`,
-      secretAccessKey: `${process.env.AWS_S3_SECRET_KEY}`,
+      accessKeyId: `${process.env.LF_S3_ACCESS_KEY}`,
+      secretAccessKey: `${process.env.LF_S3_SECRET_KEY}`,
     },
     region: "us-east-1",
   });

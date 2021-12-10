@@ -21,9 +21,13 @@ const fetcher = async (
 };
 
 export default function Build({ tdfId }: Props) {
-  const { data, error } = useSWR(`/api/chomper/${tdfId}`, fetcher, {
-    shouldRetryOnError: false,
-  });
+  const { data, error } = useSWR(
+    `https://e8uvzp1gb7.execute-api.us-east-1.amazonaws.com/chomper-next?tdfId=${tdfId}`,
+    fetcher,
+    {
+      shouldRetryOnError: false,
+    }
+  );
 
   if (error) return <div>Oh no, it exploded. Sorry.</div>;
 

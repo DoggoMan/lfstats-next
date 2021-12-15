@@ -11,7 +11,7 @@ import {
   Text,
   Spacer,
 } from "@chakra-ui/react";
-import { IoMdHome } from "react-icons/io";
+import { IoHome } from "react-icons/io5";
 
 const theme = extendTheme({
   colors: {
@@ -25,25 +25,16 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Box bgColor={"brand"}>
         <Center h="56px">
           <NextLink href={"/"}>
-            <Link>
-              <IconButton
-                aria-label={"Home"}
-                as={IoMdHome}
-                boxSize={6}
-                variant={"link"}
-                color={"white"}
-              />
-            </Link>
+            <IconButton
+              aria-label="Home"
+              icon={<IoHome />}
+              variant="link"
+              color="white"
+              size="lg"
+            />
           </NextLink>
           <Spacer />
         </Center>
-        {/* <NextLink href={'/'}>
-          <Link>
-            <Heading color="brand" textAlign={'center'}>
-              LFStats
-            </Heading>
-          </Link>
-        </NextLink> */}
       </Box>
       <Component {...pageProps} />
     </ChakraProvider>

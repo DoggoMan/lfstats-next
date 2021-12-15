@@ -121,13 +121,36 @@ export interface GameTeam {
   game_entities: GameEntity[];
 }
 
-export interface GameData {
+export interface GameMetaData {
   id: number;
   tdf_id: string;
   mission_start: number;
   mission_length: number;
   center: { name: string };
+}
+
+export interface GameData extends GameMetaData {
   game_teams: GameTeam[];
+}
+
+export async function getRecentGames(): Promise<GameMetaData[]> {
+  const { data } = await client.query({
+    query: gql`
+      query RecentGames {
+        game(order_by: { mission_start: desc }, limit: 10) {
+          id
+          tdf_id
+          mission_start
+          mission_length
+          center {
+            name
+          }
+        }
+      }
+    `,
+  });
+
+  return data.game;
 }
 
 export async function getGameData(id: number): Promise<GameData> {
@@ -136,6 +159,7 @@ export async function getGameData(id: number): Promise<GameData> {
       query Game($id: bigint!) {
         game: game_by_pk(id: $id) {
           id
+          tdf_id
           mission_start
           mission_length
           center {

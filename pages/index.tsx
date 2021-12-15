@@ -1,8 +1,13 @@
 import Head from "next/head";
 import NextLink from "next/link";
 import { Box, Heading, Link, UnorderedList, ListItem } from "@chakra-ui/react";
+import { getRecentGames, GameMetaData } from "../lib/game";
 
-export default function Homepage() {
+interface Props {
+  games: GameMetaData[];
+}
+
+export default function Homepage({ games }: Props) {
   return (
     <div>
       <Head>
@@ -24,19 +29,32 @@ export default function Homepage() {
             LFStats Next
           </Heading>
           <UnorderedList>
-            <ListItem>
-              <NextLink href={"/game/1"}>
-                <Link>View Example Game</Link>
-              </NextLink>
-            </ListItem>
-            <ListItem>
-              <NextLink href={"/replay/1"}>
-                <Link>View Example Replay</Link>
-              </NextLink>
-            </ListItem>
+            {games.map((game) => (
+              <ListItem key={game.id}>
+                <NextLink href={`/game/${game.id}`} passHref>
+                  <Link color="brand">
+                    {game.center.name} - {game.mission_start}
+                  </Link>
+                </NextLink>
+                {" - "}
+                <NextLink href={`/replay/${game.tdf_id}`} passHref>
+                  <Link color="brand">Replay</Link>
+                </NextLink>
+              </ListItem>
+            ))}
           </UnorderedList>
         </Box>
       </Box>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const data = await getRecentGames();
+
+  return {
+    props: {
+      games: data,
+    },
+  };
 }

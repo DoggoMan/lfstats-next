@@ -1,6 +1,6 @@
 import useSWR from "swr";
+import NextLink from "next/link";
 import { Box, Button, CircularProgress } from "@chakra-ui/react";
-import Link from "next/link";
 
 interface Props {
   tdfId: string;
@@ -44,9 +44,9 @@ export default function Build({ tdfId }: Props) {
     return (
       <Box justifyContent="center" px={4} maxW="2xl" mx="auto">
         <div>Build complete!</div>
-        <Link href={`/replay/${encodeURIComponent(tdfId)}`} passHref>
+        <NextLink href={`/replay/${encodeURIComponent(tdfId)}`} passHref>
           <Button colorScheme="green">Continue</Button>
-        </Link>
+        </NextLink>
       </Box>
     );
   }

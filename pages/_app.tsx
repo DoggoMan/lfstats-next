@@ -12,6 +12,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { IoHome } from "react-icons/io5";
+import NextNProgress from "nextjs-progressbar";
 
 const theme = extendTheme({
   colors: {
@@ -36,6 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Spacer />
         </Center>
       </Box>
+      <NextNProgress color="orange" />
       <Component {...pageProps} />
     </ChakraProvider>
   );

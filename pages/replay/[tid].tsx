@@ -62,7 +62,7 @@ export default function ReplayView({ replay }: Props) {
     setElapsedTime,
     timeScale,
     updateTimeScale,
-  } = useTimer();
+  } = useTimer(missionLength);
 
   const [extraStates, setExtraStates] = useState<ExtendedGameEntityState[]>([]);
   const [loading, setLoading] = useState(false);
@@ -80,7 +80,7 @@ export default function ReplayView({ replay }: Props) {
     // Maybe set some loading useState to true for the duration of this call? at least we can indicate it to user then
     const sec = Math.floor(elapsedTime);
     console.log(
-      `Requesting more states at time ${millisToMinutesAndSeconds(sec)}`
+      `Requesting more states at time ${millisToMinutesAndSeconds(sec * 1000)}`
     );
     const more = await getReplayData(replay.tdf_id, sec);
 
@@ -204,7 +204,7 @@ export default function ReplayView({ replay }: Props) {
     // States between now and 5 seconds in the future
     const upcomingStates = allStates.filter(
       (s) =>
-        s.state_time > elapsedTime * 1000 &&
+        s.state_time >= elapsedTime * 1000 &&
         s.state_time < (elapsedTime + 5 * timeScale) * 1000
     );
 

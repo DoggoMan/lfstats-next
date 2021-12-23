@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export const useTimer = () => {
+export const useTimer = (missionLength: number) => {
   const [isRunning, setIsRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -26,18 +26,17 @@ export const useTimer = () => {
     };
   }, [isRunning, timeScale]);
 
-  // Max game length is 15 minutes. If the clock exceeds this, we should automatically clamp the value.
+  // Max game length is set by parameter. If the clock exceeds this, we should automatically clamp the value.
   // We might as well clamp the bottom too, to prevent a negative time value.
   useEffect(() => {
-    // TODO: use game_length to clamp to elim game finish times, instead of assuming full 15 minutes.
-    if (elapsedTime > 15 * 60) {
+    if (elapsedTime > missionLength) {
       setIsRunning(false);
-      setElapsedTime(15 * 60);
+      setElapsedTime(missionLength);
     }
     if (elapsedTime < 0) {
       setElapsedTime(0);
     }
-  }, [elapsedTime]);
+  }, [elapsedTime, missionLength]);
 
   return {
     isRunning,
@@ -55,7 +54,7 @@ export const useTimer = () => {
   };
 };
 
-export const useStopwatch = () => {
+/*export const useStopwatch = () => {
   const { isRunning, setIsRunning, elapsedTime, setElapsedTime } = useTimer();
 
   const handleReset = () => {
@@ -70,4 +69,4 @@ export const useStopwatch = () => {
     stopTimer: () => setIsRunning(false),
     isRunning,
   };
-};
+};*/

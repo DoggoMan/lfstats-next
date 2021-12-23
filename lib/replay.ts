@@ -12,13 +12,14 @@ export type ReplayData = GameData;
 export async function ifReplayExists(tdfId: string): Promise<boolean> {
   const { data } = await client.query({
     query: gql`
-      query IfReplayExists($tdfID: String!) {
+      query IfReplayExists($tdfId: String!) {
         game(where: { tdf_id: { _eq: $tdfId } }) {
           id
         }
       }
     `,
     variables: { tdfId },
+    fetchPolicy: "network-only",
   });
 
   if (data.game[0]) return true;

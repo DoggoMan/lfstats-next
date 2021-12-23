@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import NextLink from "next/link";
-import { Box, Button, CircularProgress } from "@chakra-ui/react";
+import { Box, Button, CircularProgress, Link } from "@chakra-ui/react";
+import { ifReplayExists } from "../../lib/replay";
 
 interface Props {
   tdfId: string;
@@ -45,7 +46,9 @@ export default function Build({ tdfId }: Props) {
       <Box justifyContent="center" px={4} maxW="2xl" mx="auto">
         <div>Build complete!</div>
         <NextLink href={`/replay/${encodeURIComponent(tdfId)}`} passHref>
-          <Button colorScheme="green">Continue</Button>
+          <Link>
+            <Button colorScheme="green">Continue</Button>
+          </Link>
         </NextLink>
       </Box>
     );
@@ -54,10 +57,20 @@ export default function Build({ tdfId }: Props) {
 
 export async function getServerSideProps(context: any) {
   const tdfId = context.query.tid;
+  const replayExists = await ifReplayExists(tdfId);
 
-  return {
-    props: {
-      tdfId: tdfId,
-    },
-  };
+  if (replayExists) {
+    return {
+      redirect: {
+        destination: `/replay/${tdfId}`,
+        permanent: false,
+      },
+    };
+  } else {
+    return {
+      props: {
+        tdfId: tdfId,
+      },
+    };
+  }
 }

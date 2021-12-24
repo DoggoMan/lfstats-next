@@ -129,6 +129,26 @@ export interface GameMetaData {
   center: { name: string };
 }
 
+export interface GameAction {
+  action_text: string;
+  action_time: number;
+  action_type: string;
+  actor: {
+    name: string;
+    player_id: number;
+    team: {
+      ui_color: string;
+    };
+  } | null;
+  target: {
+    name: string;
+    player_id: number;
+    team: {
+      ui_color: string;
+    };
+  } | null;
+}
+
 export interface GameData extends GameMetaData {
   game_teams: GameTeam[];
 }

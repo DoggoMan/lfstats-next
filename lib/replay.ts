@@ -1,13 +1,13 @@
 import { gql } from "@apollo/client";
 import client from "./apollo-client";
-import { GameData } from "./game";
+import { GameData, GameAction } from "./game";
 
 // export interface ReplayData {
 //   id: number
 //   center: { name: string }
 // }
 
-export type ReplayData = GameData;
+export type ReplayData = GameData & { game_actions: GameAction[] };
 
 export async function ifReplayExists(tdfId: string): Promise<boolean> {
   const { data } = await client.query({
@@ -44,6 +44,25 @@ export async function getReplayData(
           mission_length
           center {
             name
+          }
+          game_actions(order_by: { action_time: asc_nulls_first }) {
+            action_text
+            action_time
+            action_type
+            target: gameEntityByTargetGameEntityId {
+              name: entity_desc
+              player_id
+              team: game_team {
+                ui_color
+              }
+            }
+            actor: game_entity {
+              name: entity_desc
+              player_id
+              team: game_team {
+                ui_color
+              }
+            }
           }
           game_teams {
             color_desc

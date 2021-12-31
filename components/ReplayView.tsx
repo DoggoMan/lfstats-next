@@ -15,7 +15,13 @@ import {
   SliderThumb,
   SliderTrack,
   Spacer,
+  TableCaption,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import Head from "next/head";
@@ -25,6 +31,8 @@ import { GameAction, GameEntity, GameEntityState } from "../lib/game";
 import { millisToMinutesAndSeconds } from "../lib/helper";
 import { ReplayData } from "../lib/replay";
 import { useTimer } from "../lib/stopwatch";
+import { MotionTable, MotionTd, MotionTr } from "./MotionTable";
+import { PositionIcon } from "./PositionIcon";
 
 interface ReplayProps {
   replay: ReplayData;
@@ -243,26 +251,7 @@ export default function ReplayView({ replay }: ReplayProps) {
        in both server-side compile and client-side console...
        To resolve the warning, we may have to do similar to FlippablePlayerState toward the top of this file */}
       <Flex>
-        <Box
-          maxW="2xl"
-          borderWidth="1px"
-          borderRadius="md"
-          boxShadow="base"
-          p={2}
-          my={4}
-          borderColor={`green.400`}
-          mx="auto"
-          height={500}
-        >
-          <ReplayActions actions={visibleActions} />
-        </Box>
-        <Box
-          maxW="2xl"
-          borderWidth="1px"
-          borderRadius="md"
-          boxShadow="base"
-          mx="auto"
-        >
+        <Box borderWidth="1px" borderRadius="md" boxShadow="base" mx="auto">
           {replay.game_teams
             .filter(
               ({ team_desc }: { team_desc: string }) => team_desc !== "Neutral"
@@ -282,19 +271,38 @@ export default function ReplayView({ replay }: ReplayProps) {
                 (tScore) => tScore.team === team.team_desc
               );
               return (
-                <motion.table
+                <MotionTable
+                  size="sm"
                   layout
-                  transition={{ type: "spring", duration: 0.3 }}
+                  transition={{ type: "spring", duration: 0.5 }}
                   key={team.team_index}
+                  color={`${team.ui_color}.500`}
                 >
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Score</th>
-                      <th>MVP</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                  <TableCaption placement="top">
+                    <Flex>
+                      <Heading color={`${team.ui_color}.500`} size="lg">
+                        {team.team_desc}
+                      </Heading>
+                      <Spacer />
+                      <Heading color={`${team.ui_color}.500`} size="lg">
+                        {teamData?.score}
+                      </Heading>
+                    </Flex>
+                  </TableCaption>
+                  <Thead>
+                    <Tr>
+                      <Th>{""}</Th>
+                      <Th>Name</Th>
+                      <Th>Score</Th>
+                      <Th>Lives</Th>
+                      <Th>Shots</Th>
+                      <Th>Msls</Th>
+                      <Th>Spec</Th>
+                      <Th>MVP</Th>
+                      <Th>Acc</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
                     {team.game_entities
                       .filter(
                         ({ entity_type }: { entity_type: string }) =>
@@ -317,21 +325,52 @@ export default function ReplayView({ replay }: ReplayProps) {
                             (state) => state?.entity_id === entity.id
                           ) ?? null;
                         return (
-                          <motion.tr
+                          <MotionTr
                             layout
-                            transition={{ type: "spring", duration: 0.3 }}
+                            transition={{
+                              type: "spring",
+                              duration: 0.3,
+                            }}
                             key={entity.id}
+                            color={!state?.is_active ? "gray" : undefined}
                           >
-                            <td>{entity.player.current_alias}</td>
-                            <td>{state?.score}</td>
-                            <td>{Math.round((state?.mvp ?? 0) * 100) / 100}</td>
-                          </motion.tr>
+                            <Td>
+                              <PositionIcon position={entity.position} />
+                            </Td>
+                            <Td>{entity.player.current_alias}</Td>
+                            <Td isNumeric>{state?.score}</Td>
+                            <Td isNumeric>{state?.lives}</Td>
+                            <Td isNumeric>{state?.shots}</Td>
+                            <Td isNumeric>{state?.missiles_left}</Td>
+                            <Td isNumeric>
+                              {(state?.sp_earned ?? 0) - (state?.sp_spent ?? 0)}
+                            </Td>
+                            <Td isNumeric>
+                              {Math.round((state?.mvp ?? 0) * 100) / 100}
+                            </Td>
+                            <Td isNumeric>
+                              {Math.round((state?.accuracy ?? 0) * 10000) / 100}
+                              {` %`}
+                            </Td>
+                          </MotionTr>
                         );
                       })}
-                  </tbody>
-                </motion.table>
+                  </Tbody>
+                </MotionTable>
               );
             })}
+        </Box>
+        <Box
+          borderWidth="1px"
+          borderRadius="md"
+          boxShadow="base"
+          p={2}
+          my={4}
+          borderColor={`green.400`}
+          mx="auto"
+          height={500}
+        >
+          <ReplayActions actions={visibleActions} />
         </Box>
       </Flex>
     </>

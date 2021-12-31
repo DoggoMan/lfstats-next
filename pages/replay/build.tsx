@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import NextLink from "next/link";
-import { Box, Button, CircularProgress, Link } from "@chakra-ui/react";
+import { Box, Button, CircularProgress, Link, Text } from "@chakra-ui/react";
 import { ifReplayExists } from "../../lib/replay";
 
 interface Props {
@@ -35,9 +35,9 @@ export default function Build({ tdfId }: Props) {
   if (!data) {
     return (
       <Box justifyContent="center" px={4} maxW="2xl" mx="auto">
-        <div>
+        <Text>
           Looks like we haven&apos;t built that game yet. Give me a second...
-        </div>
+        </Text>
         <CircularProgress isIndeterminate color="green.300" />
       </Box>
     );

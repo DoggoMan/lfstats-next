@@ -3,7 +3,7 @@ import { Stat, StatNumber, StatHelpText } from "@chakra-ui/react";
 
 interface StatProps {
   name: string;
-  value: string;
+  value: string | number;
   size?: string;
 }
 

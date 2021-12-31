@@ -23,7 +23,7 @@ import { GameEntity, GameEntityState, GameTeam } from "../lib/game";
 export interface PlayerProps {
   team: GameTeam;
   entity: Omit<GameEntity, "game_entity_states">;
-  state: GameEntityState | null;
+  state: GameEntityState;
 }
 
 export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
@@ -80,7 +80,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
             <StatGroup>
               <StatDisplay value={state?.score || 0} name="Score" />
               <StatDisplay
-                value={String(state?.sp_earned - state?.sp_spent || 0)}
+                value={state?.sp_earned - state?.sp_spent || 0}
                 name="Spec"
               />
               {/* <StatDisplay value="N/A" name="MVP" /> */}

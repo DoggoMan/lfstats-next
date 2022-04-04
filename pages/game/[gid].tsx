@@ -7,17 +7,14 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionIcon,
-  Stat,
-  StatLabel,
-  StatNumber,
   Spacer,
   Text,
   Heading,
   StatGroup,
-  StatHelpText,
   Flex,
   SimpleGrid,
 } from "@chakra-ui/react";
+import { DateTime } from "luxon";
 import { StatDisplay } from "../../components/StatDisplay";
 import { PositionIcon } from "../../components/PositionIcon";
 import { getGameData, GameData } from "../../lib/game";
@@ -28,7 +25,7 @@ interface Props {
 }
 
 export default function GameView({ game }: Props) {
-  const missionStart = new Date(game?.mission_start);
+  const missionStart = DateTime.fromISO(game?.mission_start);
   return (
     <div>
       <Head>
@@ -36,15 +33,16 @@ export default function GameView({ game }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box maxW="2xl" key={"game header"} p={2} my={4} mx="auto">
-        <Flex>
-          <Heading>
-            Game at {missionStart.getHours()}:{missionStart.getMinutes()}
-          </Heading>
-          {/* REVIEW: We can't even link to lfstats.com because the replay.id is not the lfstats game id :( */}
-          {/* <Link href={`https://lfstats.com/games/view/${replay.id}`}></Link> */}
-        </Flex>
+        <Heading>Game {game.tdf_id}</Heading>
+        <Text>
+          {missionStart.toLocaleString({
+            ...DateTime.DATETIME_HUGE,
+            timeZoneName: undefined,
+          })}{" "}
+          @ {game.center.name}
+        </Text>
       </Box>
-      <Box justifyContent="center" paddingTop="70" px={4}>
+      <Box justifyContent="center" px={4}>
         {game.game_teams
           .filter(
             ({ team_desc }: { team_desc: string }) => team_desc !== "Neutral"

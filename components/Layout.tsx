@@ -13,7 +13,7 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <Box bgColor={"brand"}>
         <Center h="56px">
-          <NextLink href={"/"}>
+          <NextLink href={"/"} passHref>
             <IconButton
               aria-label="Home"
               icon={<IoHome />}

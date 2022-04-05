@@ -18,3 +18,35 @@ export function useHasMounted() {
   }, []);
   return hasMounted;
 }
+
+export function decodeMVP([key, value]: [string, number | string]) {
+  let mvpName = key;
+  let mvpValue = value;
+  switch (key) {
+    case "position":
+      mvpName = "Position";
+      switch (value) {
+        case "commander":
+          mvpValue = "Commander";
+          break;
+        case "heavy":
+          mvpValue = "Heavy Weapons";
+          break;
+        case "scout":
+          mvpValue = "Scout";
+          break;
+        case "ammo":
+          mvpValue = "Ammo Carrier";
+          break;
+        case "medic":
+          mvpValue = "Medic";
+          break;
+      }
+      break;
+    case "accuracy":
+      mvpName = "Accuracy";
+      mvpValue = (<number>value).toFixed(2);
+      break;
+  }
+  return { mvpName: mvpName, mvpValue: mvpValue };
+}

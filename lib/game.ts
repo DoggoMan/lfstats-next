@@ -269,6 +269,8 @@ export async function getGameData(id: number): Promise<GameData> {
                 missile_opponent
                 missile_team
                 missiles_left
+                mvp
+                mvp_details
                 nuke_downtime
                 nuke_medic_hits
                 nukes_activated

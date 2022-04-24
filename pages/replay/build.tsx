@@ -23,7 +23,7 @@ const fetcher = async (
 
 export default function Build({ tdfId }: Props) {
   const { data, error } = useSWR(
-    `${process.env.CHOMPER_URI}?tdfId=${tdfId}`,
+    `${process.env.NEXT_PUBLIC_CHOMPER_URI}?tdfId=${tdfId}`,
     fetcher,
     {
       shouldRetryOnError: false,

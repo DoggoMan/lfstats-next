@@ -57,7 +57,9 @@ export const GET_REPLAY = gql`
             current_alias
             ipl_id
           }
-          game_entity_states(order_by: { state_time: asc_nulls_first }) {
+          game_entity_states: v_game_entity_states(
+            order_by: { state_time: asc_nulls_first }
+          ) {
             accuracy
             accuracy_during_rapid
             ammo_boost_received

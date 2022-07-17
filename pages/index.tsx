@@ -1,13 +1,26 @@
 import Head from "next/head";
 import NextLink from "next/link";
-import { Box, Heading, Link, UnorderedList, ListItem } from "@chakra-ui/react";
-import { getRecentGames, GameMetaData } from "../lib/game";
+import {
+  Box,
+  Heading,
+  Link,
+  TableContainer,
+  Table,
+  TableCaption,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+} from "@chakra-ui/react";
+import { DateTime } from "luxon";
+import { EventMetaData, getRecentEvents } from "../lib/event";
 
 interface Props {
-  games: GameMetaData[];
+  events: EventMetaData[];
 }
 
-export default function Homepage({ games }: Props) {
+export default function Homepage({ events }: Props) {
   return (
     <div>
       <Head>
@@ -27,32 +40,46 @@ export default function Homepage({ games }: Props) {
         <Heading paddingBottom="30" color={`cyan.500`}>
           LFStats Next
         </Heading>
-        <UnorderedList>
-          {games.map((game) => (
-            <ListItem key={game.id}>
-              <NextLink href={`/game/${game.id}`} passHref>
-                <Link color="brand">
-                  {game.center.name} - {game.mission_start}
-                </Link>
-              </NextLink>
-              {" - "}
-              <NextLink href={`/replay/${game.tdf_id}`} passHref>
-                <Link color="brand">Replay</Link>
-              </NextLink>
-            </ListItem>
-          ))}
-        </UnorderedList>
+        <TableContainer>
+          <Table variant="simple" size="sm">
+            <TableCaption>Recent Events Played</TableCaption>
+            <Thead>
+              <Tr>
+                <Th>Center</Th>
+                <Th>Event</Th>
+                <Th>Last Played</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {events.map((event) => (
+                <Tr key={event.id}>
+                  <Td>{event.center.name}</Td>
+                  <Td>
+                    <NextLink href={`/event/${event.id}`} passHref>
+                      <Link color="brand">{event.name}</Link>
+                    </NextLink>
+                  </Td>
+                  <Td>
+                    {DateTime.fromISO(event.max_gamedatetime, {
+                      zone: "utc",
+                    }).toLocaleString(DateTime.DATETIME_SHORT)}
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </Box>
     </div>
   );
 }
 
 export async function getServerSideProps() {
-  const data = await getRecentGames();
+  const eventData = await getRecentEvents();
 
   return {
     props: {
-      games: data,
+      events: eventData,
     },
   };
 }

@@ -136,7 +136,7 @@ export default function ReplayView({ replay }: ReplayProps) {
         key={"states loaded"}
         p={2}
         my={4}
-        borderColor={`green.400`}
+        borderColor={`brand.400`}
         mx="auto"
       >
         <Flex>
@@ -162,7 +162,7 @@ export default function ReplayView({ replay }: ReplayProps) {
         key={"time"}
         p={2}
         my={4}
-        borderColor={`green.400`}
+        borderColor={`brand.400`}
         mx="auto"
       >
         <Flex gridGap={1}>
@@ -249,8 +249,16 @@ export default function ReplayView({ replay }: ReplayProps) {
       {/* This works, although it does throw a warning
        in both server-side compile and client-side console...
        To resolve the warning, we may have to do similar to FlippablePlayerState toward the top of this file */}
-      <Flex>
-        <Box borderWidth="1px" borderRadius="md" boxShadow="base" mx="auto">
+      <Flex justify="center">
+        <Box
+          borderWidth="1px"
+          borderRadius="md"
+          boxShadow="base"
+          mx="auto"
+          borderColor={`brand.400`}
+          p={2}
+          my={4}
+        >
           {replay.game_teams
             .filter(
               ({ team_desc }: { team_desc: string }) => team_desc !== "Neutral"
@@ -360,12 +368,13 @@ export default function ReplayView({ replay }: ReplayProps) {
             })}
         </Box>
         <Box
+          minW={400}
           borderWidth="1px"
           borderRadius="md"
           boxShadow="base"
           p={2}
           my={4}
-          borderColor={`green.400`}
+          borderColor={`brand.400`}
           mx="auto"
           height={500}
         >

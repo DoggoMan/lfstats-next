@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FaBell, FaClipboardCheck, FaRss } from "react-icons/fa";
 import { AiFillGift } from "react-icons/ai";
-import { BsGearFill } from "react-icons/bs";
+import { BsGearFill, BsPlayBtn } from "react-icons/bs";
 import { FiMenu } from "react-icons/fi";
 import { HiCode, HiCollection } from "react-icons/hi";
 import { MdHome } from "react-icons/md";
@@ -93,12 +93,14 @@ export default function Shell({ children }: ShellProps) {
         <NextLink href={"/"} passHref>
           <NavItem icon={MdHome}>Home</NavItem>
         </NextLink>
-        <NavItem icon={FaRss}>Articles</NavItem>
-        <NavItem icon={HiCollection}>Collections</NavItem>
-        <NavItem icon={FaClipboardCheck}>Checklists</NavItem>
-        <NavItem icon={HiCode}>Integrations</NavItem>
-        <NavItem icon={AiFillGift}>Changelog</NavItem>
-        <NavItem icon={BsGearFill}>Settings</NavItem>
+        <NextLink href={"/replay"} passHref>
+          <NavItem icon={BsPlayBtn}>Replays</NavItem>
+        </NextLink>
+        <NavItem icon={HiCollection}>Placeholder</NavItem>
+        <NavItem icon={FaClipboardCheck}>Placeholder</NavItem>
+        <NavItem icon={HiCode}>Placeholder</NavItem>
+        <NavItem icon={AiFillGift}>Placeholder</NavItem>
+        <NavItem icon={BsGearFill}>Placeholder</NavItem>
       </Flex>
     </Box>
   );

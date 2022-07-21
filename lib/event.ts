@@ -8,7 +8,29 @@ export interface EventMetaData {
   type: string;
   is_comp: boolean;
   center: CenterMetaData;
-  max_gamedatetime: string;
+  max_gamedatetime?: string;
+}
+
+export async function getEventMetaData(id: number): Promise<EventMetaData> {
+  const { data } = await client.query({
+    query: gql`
+      query EventMetaData($id: bigint!) {
+        event: events_by_pk(id: $id) {
+          id
+          name
+          type
+          is_comp
+          center {
+            id
+            name
+            short_name
+          }
+        }
+      }
+    `,
+    variables: { id },
+  });
+  return data.event;
 }
 
 export async function getRecentEvents(): Promise<EventMetaData[]> {
@@ -28,6 +50,7 @@ export async function getRecentEvents(): Promise<EventMetaData[]> {
           center {
             id
             name
+            short_name
           }
           games_aggregate {
             aggregate {

@@ -34,12 +34,9 @@ export default function Homepage({ events }: Props) {
         boxShadow="base"
         p={2}
         my={4}
-        borderColor={`cyan.400`}
+        borderColor={`brand.400`}
         mx="auto"
       >
-        <Heading paddingBottom="30" color={`cyan.500`}>
-          LFStats Next
-        </Heading>
         <TableContainer>
           <Table variant="simple" size="sm">
             <TableCaption>Recent Events Played</TableCaption>
@@ -56,13 +53,14 @@ export default function Homepage({ events }: Props) {
                   <Td>{event.center.name}</Td>
                   <Td>
                     <NextLink href={`/event/${event.id}`} passHref>
-                      <Link color="brand">{event.name}</Link>
+                      <Link color="brand.400">{event.name}</Link>
                     </NextLink>
                   </Td>
                   <Td>
-                    {DateTime.fromISO(event.max_gamedatetime, {
-                      zone: "utc",
-                    }).toLocaleString(DateTime.DATETIME_SHORT)}
+                    {event.max_gamedatetime &&
+                      DateTime.fromISO(event.max_gamedatetime, {
+                        zone: "utc",
+                      }).toLocaleString(DateTime.DATETIME_SHORT)}
                   </Td>
                 </Tr>
               ))}

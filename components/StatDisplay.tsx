@@ -1,5 +1,5 @@
+import { Stat, StatHelpText, StatNumber } from "@chakra-ui/react";
 import { FC } from "react";
-import { Stat, StatNumber, StatHelpText } from "@chakra-ui/react";
 
 interface StatProps {
   name: string;

@@ -1,24 +1,23 @@
-import React, { FC } from "react";
 import {
-  AccordionItem,
+  Accordion,
   AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Box,
+  Center,
   Flex,
   Heading,
-  Center,
+  SimpleGrid,
   Spacer,
   StatGroup,
-  AccordionIcon,
-  AccordionPanel,
-  SimpleGrid,
-  Accordion,
 } from "@chakra-ui/react";
+import { FC, useEffect } from "react";
 import { BsCircleFill } from "react-icons/bs";
+import { GameEntity, GameEntityState, GameTeam } from "../lib/game";
 import { millisToMinutesAndSeconds } from "../lib/helper";
 import { PositionIcon } from "./PositionIcon";
 import { StatDisplay } from "./StatDisplay";
-import { useEffect } from "react";
-import { GameEntity, GameEntityState, GameTeam } from "../lib/game";
 
 export interface PlayerProps {
   team: GameTeam;

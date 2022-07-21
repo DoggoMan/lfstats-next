@@ -1,8 +1,8 @@
+import { Box, Text } from "@chakra-ui/react";
+import { memo } from "react";
+import ScrollableFeed from "react-scrollable-feed";
 import { GameAction } from "../lib/game";
 import { millisToMinutesAndSeconds } from "../lib/helper";
-import ScrollableFeed from "react-scrollable-feed";
-import { Text, Box } from "@chakra-ui/react";
-import { memo } from "react";
 
 interface ReplayActionsProps {
   actions: GameAction[];

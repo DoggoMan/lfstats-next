@@ -25,13 +25,13 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
-import ReplayActions from "./ReplayActions";
 import { GameAction, GameEntity, GameEntityState } from "../lib/game";
 import { millisToMinutesAndSeconds } from "../lib/helper";
 import { ReplayData } from "../lib/replay";
 import { useTimer } from "../lib/stopwatch";
 import { MotionTable, MotionTr } from "./MotionTable";
 import { PositionIcon } from "./PositionIcon";
+import ReplayActions from "./ReplayActions";
 
 interface ReplayProps {
   replay: ReplayData;

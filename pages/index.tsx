@@ -14,7 +14,8 @@ import {
   Td,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
-import { EventMetaData, getRecentEvents } from "../lib/event";
+import { getRecentEvents } from "../lib/event";
+import { EventMetaData } from "../types/EventMetaData";
 
 interface Props {
   events: EventMetaData[];
@@ -34,7 +35,7 @@ export default function Homepage({ events }: Props) {
         boxShadow="base"
         p={2}
         my={4}
-        borderColor={`brand.400`}
+        borderColor={`blue.400`}
         mx="auto"
       >
         <TableContainer>
@@ -53,7 +54,7 @@ export default function Homepage({ events }: Props) {
                   <Td>{event.center.name}</Td>
                   <Td>
                     <NextLink href={`/event/${event.id}`} passHref>
-                      <Link color="brand.400">{event.name}</Link>
+                      <Link color="blue.400">{event.name}</Link>
                     </NextLink>
                   </Td>
                   <Td>

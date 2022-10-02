@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import client from "./apollo-client";
-import { GameData, GameAction, GameTeam, GameEntityState } from "./game";
+import { GameAction } from "../types/GameAction";
+import { GameData } from "../types/GameData";
 
 export const GET_REPLAY = gql`
   query Replay($tdfId: String!) {

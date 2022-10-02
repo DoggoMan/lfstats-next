@@ -1,4 +1,4 @@
-import { EventMetaData } from "../lib/event";
+import { EventMetaData } from "../types/EventMetaData";
 
 interface Props {
   event: EventMetaData;

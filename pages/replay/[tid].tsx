@@ -1,5 +1,6 @@
 import ReplayViewContainer from "../../components/ReplayViewContainer";
-import { GameMetaData, getGameMetaData } from "../../lib/game";
+import { getGameMetaData } from "../../lib/game";
+import { GameMetaData } from "../../types/GameMetaData";
 import { useHasMounted } from "../../lib/helper";
 
 interface ReplayProps {

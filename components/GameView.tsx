@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import Head from "next/head";
-import { GameData } from "../lib/game";
+import { GameData } from "../types/GameData";
 import { decodeMVP, millisToMinutesAndSeconds } from "../lib/helper";
 import { PositionIcon } from "./PositionIcon";
 import { StatDisplay } from "./StatDisplay";
@@ -38,7 +38,7 @@ export default function GameView({ game }: Props) {
             ...DateTime.DATETIME_HUGE,
             timeZoneName: undefined,
           })}{" "}
-          @ {game.center.name}
+          @ {game.center?.name}
         </Text>
       </Box>
       <Box justifyContent="center" px={4}>

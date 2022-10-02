@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { Box, Spinner, Stack, Text } from "@chakra-ui/react";
-import { GameMetaData } from "../lib/game";
+import { GameMetaData } from "../types/GameMetaData";
 import { GET_REPLAY } from "../lib/replay";
 import ReplayView from "./ReplayView";
 
@@ -22,7 +22,7 @@ export default function ReplayViewContainer({
           <Spinner
             thickness="4px"
             speed="0.65s"
-            emptyColor="gray.200"
+            emptyColor="blue.200"
             color="blue.500"
             size="lg"
           />

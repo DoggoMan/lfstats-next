@@ -1,4 +1,5 @@
-import { EventMetaData, getEventMetaData } from "../../lib/event";
+import { getEventMetaData } from "../../lib/event";
+import { EventMetaData } from "../../types/EventMetaData";
 import EventView from "../../components/EventView";
 
 interface Props {

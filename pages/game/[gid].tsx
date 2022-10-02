@@ -1,4 +1,5 @@
-import { getGameData, GameData } from "../../lib/game";
+import { getGameData } from "../../lib/game";
+import { GameData } from "../../types/GameData";
 import GameView from "../../components/GameView";
 
 interface Props {

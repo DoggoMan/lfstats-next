@@ -10,7 +10,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FaBell, FaClipboardCheck, FaRss } from "react-icons/fa";
+import { FaClipboardCheck } from "react-icons/fa";
 import { AiFillGift } from "react-icons/ai";
 import { BsGearFill, BsPlayBtn } from "react-icons/bs";
 import { FiMenu } from "react-icons/fi";
@@ -18,6 +18,8 @@ import { HiCode, HiCollection } from "react-icons/hi";
 import { MdHome } from "react-icons/md";
 import React, { ReactNode } from "react";
 import NextLink from "next/link";
+import ChakraNextLink from "./ChakraNextLink";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 interface ShellProps {
   children: ReactNode;
@@ -72,7 +74,7 @@ export default function Shell({ children }: ShellProps) {
       pb="10"
       overflowX="hidden"
       overflowY="auto"
-      bg="brand.600"
+      bg="blue.700"
       borderColor="blackAlpha.300"
       borderRightWidth="1px"
       w="60"
@@ -90,12 +92,12 @@ export default function Shell({ children }: ShellProps) {
         color="gray.600"
         aria-label="Main Navigation"
       >
-        <NextLink href={"/"} passHref>
+        <ChakraNextLink href={"/"}>
           <NavItem icon={MdHome}>Home</NavItem>
-        </NextLink>
-        <NextLink href={"/replay"} passHref>
+        </ChakraNextLink>
+        <ChakraNextLink href={"/replay"}>
           <NavItem icon={BsPlayBtn}>Replays</NavItem>
-        </NextLink>
+        </ChakraNextLink>
         <NavItem icon={HiCollection}>Placeholder</NavItem>
         <NavItem icon={FaClipboardCheck}>Placeholder</NavItem>
         <NavItem icon={HiCode}>Placeholder</NavItem>
@@ -146,7 +148,7 @@ export default function Shell({ children }: ShellProps) {
           <Box></Box>
 
           <Flex align="center">
-            <Icon color="gray.500" as={FaBell} cursor="pointer" />
+            <ThemeSwitcher />
             <Avatar ml="4" size="sm" cursor="pointer" />
           </Flex>
         </Flex>

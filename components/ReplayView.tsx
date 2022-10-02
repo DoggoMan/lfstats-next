@@ -25,7 +25,9 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
-import { GameAction, GameEntity, GameEntityState } from "../lib/game";
+import { GameEntityState } from "../types/GameEntityState";
+import { GameEntity } from "../types/GameEntity";
+import { GameAction } from "../types/GameAction";
 import { millisToMinutesAndSeconds } from "../lib/helper";
 import { ReplayData } from "../lib/replay";
 import { useTimer } from "../lib/stopwatch";
@@ -121,7 +123,7 @@ export default function ReplayView({ replay }: ReplayProps) {
       <Box maxW="2xl" key={"game header"} p={2} my={4} mx="auto">
         <Flex>
           <Heading>
-            {replay.center.name} Replay at {missionStart.getHours()}:
+            {replay.center?.name} Replay at {missionStart.getHours()}:
             {missionStart.getMinutes()}
           </Heading>
           {/* REVIEW: We can't even link to lfstats.com because the replay.id is not the lfstats game id :( */}
@@ -136,7 +138,7 @@ export default function ReplayView({ replay }: ReplayProps) {
         key={"states loaded"}
         p={2}
         my={4}
-        borderColor={`brand.400`}
+        borderColor={`blue.400`}
         mx="auto"
       >
         <Flex>
@@ -162,7 +164,7 @@ export default function ReplayView({ replay }: ReplayProps) {
         key={"time"}
         p={2}
         my={4}
-        borderColor={`brand.400`}
+        borderColor={`blue.400`}
         mx="auto"
       >
         <Flex gridGap={1}>
@@ -255,7 +257,7 @@ export default function ReplayView({ replay }: ReplayProps) {
           borderRadius="md"
           boxShadow="base"
           mx="auto"
-          borderColor={`brand.400`}
+          borderColor={`blue.400`}
           p={2}
           my={4}
         >
@@ -374,7 +376,7 @@ export default function ReplayView({ replay }: ReplayProps) {
           boxShadow="base"
           p={2}
           my={4}
-          borderColor={`brand.400`}
+          borderColor={`blue.400`}
           mx="auto"
           height={500}
         >

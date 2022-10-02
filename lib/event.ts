@@ -1,15 +1,6 @@
 import { gql } from "@apollo/client";
 import client from "./apollo-client";
-import { CenterMetaData } from "./center";
-
-export interface EventMetaData {
-  id: number;
-  name: string;
-  type: string;
-  is_comp: boolean;
-  center: CenterMetaData;
-  max_gamedatetime?: string;
-}
+import { EventMetaData } from "../types/EventMetaData";
 
 export async function getEventMetaData(id: number): Promise<EventMetaData> {
   const { data } = await client.query({
@@ -24,6 +15,13 @@ export async function getEventMetaData(id: number): Promise<EventMetaData> {
             id
             name
             short_name
+          }
+          games_aggregate {
+            aggregate {
+              max {
+                game_datetime
+              }
+            }
           }
         }
       }

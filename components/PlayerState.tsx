@@ -14,7 +14,9 @@ import {
 } from "@chakra-ui/react";
 import { FC, useEffect } from "react";
 import { BsCircleFill } from "react-icons/bs";
-import { GameEntity, GameEntityState, GameTeam } from "../lib/game";
+import { GameEntityState } from "../types/GameEntityState";
+import { GameEntity } from "../types/GameEntity";
+import { GameTeam } from "../types/GameTeam";
 import { millisToMinutesAndSeconds } from "../lib/helper";
 import { PositionIcon } from "./PositionIcon";
 import { StatDisplay } from "./StatDisplay";

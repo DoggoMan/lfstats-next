@@ -2,7 +2,6 @@ import Head from "next/head";
 import NextLink from "next/link";
 import {
   Box,
-  Heading,
   Link,
   TableContainer,
   Table,
@@ -14,14 +13,14 @@ import {
   Td,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
-import { getRecentEvents } from "../lib/event";
-import { EventMetaData } from "../types/EventMetaData";
+import { getCenters } from "../lib/center";
+import { CenterMetaData } from "../types/CenterMetaData";
 
 interface Props {
-  events: EventMetaData[];
+  centers: CenterMetaData[];
 }
 
-export default function Homepage({ events }: Props) {
+export default function Homepage({ centers }: Props) {
   return (
     <div>
       <Head>
@@ -29,7 +28,7 @@ export default function Homepage({ events }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box
-        maxW="2xl"
+        maxW="lg"
         borderWidth="1px"
         borderRadius="md"
         boxShadow="base"
@@ -40,28 +39,26 @@ export default function Homepage({ events }: Props) {
       >
         <TableContainer>
           <Table variant="simple" size="sm">
-            <TableCaption>Recent Events Played</TableCaption>
+            <TableCaption>Recent Socials</TableCaption>
             <Thead>
               <Tr>
                 <Th>Center</Th>
-                <Th>Event</Th>
                 <Th>Last Played</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {events.map((event) => (
-                <Tr key={event.id}>
-                  <Td>{event.center.name}</Td>
+              {centers.map((center) => (
+                <Tr key={center.id}>
+                  <Td>{center.name}</Td>
                   <Td>
-                    <NextLink href={`/event/${event.id}`} passHref>
-                      <Link color="blue.400">{event.name}</Link>
+                    <NextLink href={`/socials/${center.id}`} passHref>
+                      <Link color="blue.400">
+                        {center.last_social &&
+                          DateTime.fromISO(center.last_social, {
+                            zone: "utc",
+                          }).toLocaleString(DateTime.DATETIME_SHORT)}
+                      </Link>
                     </NextLink>
-                  </Td>
-                  <Td>
-                    {event.max_gamedatetime &&
-                      DateTime.fromISO(event.max_gamedatetime, {
-                        zone: "utc",
-                      }).toLocaleString(DateTime.DATETIME_SHORT)}
                   </Td>
                 </Tr>
               ))}
@@ -74,11 +71,11 @@ export default function Homepage({ events }: Props) {
 }
 
 export async function getServerSideProps() {
-  const eventData = await getRecentEvents();
+  const centerData = await getCenters();
 
   return {
     props: {
-      events: eventData,
+      centers: centerData,
     },
   };
 }

@@ -1,6 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
 import { memo } from "react";
-import ScrollableFeed from "react-scrollable-feed";
+import ScrollableFeed from "./ScrollableFeed";
 import { GameAction } from "../types/GameAction";
 import { millisToMinutesAndSeconds } from "../lib/helper";
 

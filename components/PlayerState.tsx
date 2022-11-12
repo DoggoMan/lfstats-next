@@ -52,7 +52,7 @@ export const PlayerState: FC<PlayerProps> = ({ team, entity, state }) => {
                 textDecoration={
                   state?.is_eliminated ? "line-through" : undefined
                 }
-                isTruncated
+                noOfLines={1}
               >
                 {entity.entity_desc}(
                 {millisToMinutesAndSeconds(state?.state_time)})

@@ -1,8 +1,6 @@
 import Head from "next/head";
-import NextLink from "next/link";
 import {
   Box,
-  Link,
   TableContainer,
   Table,
   TableCaption,
@@ -12,6 +10,7 @@ import {
   Tbody,
   Td,
 } from "@chakra-ui/react";
+import ChakraNextLink from "../components/ChakraNextLink";
 import { DateTime } from "luxon";
 import { getCenters } from "../lib/center";
 import { CenterMetaData } from "../types/CenterMetaData";
@@ -51,14 +50,15 @@ export default function Homepage({ centers }: Props) {
                 <Tr key={center.id}>
                   <Td>{center.name}</Td>
                   <Td>
-                    <NextLink href={`/socials/${center.id}`} passHref>
-                      <Link color="blue.400">
-                        {center.last_social &&
-                          DateTime.fromISO(center.last_social, {
-                            zone: "utc",
-                          }).toLocaleString(DateTime.DATETIME_SHORT)}
-                      </Link>
-                    </NextLink>
+                    <ChakraNextLink
+                      href={`/socials/${center.id}`}
+                      color="blue.400"
+                    >
+                      {center.last_social &&
+                        DateTime.fromISO(center.last_social, {
+                          zone: "utc",
+                        }).toLocaleString(DateTime.DATETIME_SHORT)}
+                    </ChakraNextLink>
                   </Td>
                 </Tr>
               ))}

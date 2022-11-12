@@ -1,12 +1,6 @@
 import * as React from "react";
-import CSS from "csstype";
 import { ReactNode } from "react";
-
-const feedStyle: CSS.Properties = {
-  maxHeight: "inherit",
-  height: "inherit",
-  overflowY: "auto",
-};
+import styles from "../styles.module.css";
 
 export type ScrollableFeedProps = {
   forceScroll?: boolean;
@@ -161,9 +155,14 @@ class ScrollableFeed extends React.Component<ScrollableFeedProps> {
 
   render(): React.ReactNode {
     const { children, className } = this.props;
-    const joinedClassName = className ? " " + className : "";
+    const joinedClassName =
+      styles.scrollableDiv + (className ? " " + className : "");
     return (
-      <div style={feedStyle} ref={this.wrapperRef} onScroll={this.handleScroll}>
+      <div
+        className={joinedClassName}
+        ref={this.wrapperRef}
+        onScroll={this.handleScroll}
+      >
         {children}
         <div ref={this.bottomRef}></div>
       </div>

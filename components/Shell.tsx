@@ -17,7 +17,6 @@ import { FiMenu } from "react-icons/fi";
 import { HiCode, HiCollection } from "react-icons/hi";
 import { MdHome } from "react-icons/md";
 import React, { ReactNode } from "react";
-import NextLink from "next/link";
 import ChakraNextLink from "./ChakraNextLink";
 import ThemeSwitcher from "./ThemeSwitcher";
 

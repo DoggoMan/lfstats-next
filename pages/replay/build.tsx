@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import NextLink from "next/link";
-import { Box, Button, CircularProgress, Link, Text } from "@chakra-ui/react";
+import { Box, Button, CircularProgress, Text } from "@chakra-ui/react";
+import ChakraNextLink from "../../components/ChakraNextLink";
 import { ifReplayExists } from "../../lib/replay";
 
 interface Props {
@@ -45,11 +45,9 @@ export default function Build({ tdfId }: Props) {
     return (
       <Box justifyContent="center" px={4} maxW="2xl" mx="auto">
         <div>Build complete!</div>
-        <NextLink href={`/replay/${encodeURIComponent(tdfId)}`} passHref>
-          <Link>
-            <Button colorScheme="green">Continue</Button>
-          </Link>
-        </NextLink>
+        <ChakraNextLink href={`/replay/${encodeURIComponent(tdfId)}`}>
+          <Button colorScheme="green">Continue</Button>
+        </ChakraNextLink>
       </Box>
     );
   }

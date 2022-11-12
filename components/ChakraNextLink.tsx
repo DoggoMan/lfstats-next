@@ -1,21 +1,10 @@
-import Link, { LinkProps } from "next/link";
-import {
-  Link as ChakraLink,
-  LinkProps as ChakraLinkProps,
-} from "@chakra-ui/react";
+import NextLink, { type LinkProps as NextLinkProps } from "next/link";
+import { chakra } from "@chakra-ui/react";
 
-type ChakraLinkAndNextProps = ChakraLinkProps & LinkProps;
+// wrap the NextLink with Chakra UI's factory function
+const ChakraNextLink = chakra<typeof NextLink, NextLinkProps>(NextLink, {
+  // ensure that you're forwarding all of the required props for your case
+  shouldForwardProp: (prop) => ["href", "target", "children"].includes(prop),
+});
 
-export default function ChakraNextLink({
-  href,
-  children,
-  ...props
-}: ChakraLinkAndNextProps) {
-  return (
-    <Link href={href} passHref>
-      <ChakraLink color="blue.400" {...props}>
-        {children}
-      </ChakraLink>
-    </Link>
-  );
-}
+export default ChakraNextLink;

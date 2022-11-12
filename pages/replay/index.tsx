@@ -1,6 +1,5 @@
 import {
   Box,
-  Link,
   ListItem,
   Table,
   Tbody,
@@ -18,7 +17,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { DateTime } from "luxon";
-import NextLink from "next/link";
 import ChakraNextLink from "../../components/ChakraNextLink";
 import { getRecentGames } from "../../lib/game";
 import { GameMetaData } from "../../types/GameMetaData";
@@ -36,7 +34,7 @@ const defaultColumns: ColumnDef<GameMetaData>[] = [
     header: "Game Start",
     accessorFn: (row) => row.mission_start,
     cell: (props) => (
-      <ChakraNextLink href={`/game/${props.row.original.id}`}>
+      <ChakraNextLink href={`/game/${props.row.original.id}`} color="blue.400">
         {DateTime.fromISO(props.getValue() as string).toLocaleString(
           DateTime.DATETIME_SHORT
         )}
@@ -47,7 +45,10 @@ const defaultColumns: ColumnDef<GameMetaData>[] = [
     header: "Replay",
     accessorFn: (row) => row.tdf_id,
     cell: (props) => (
-      <ChakraNextLink href={`/replay/${props.row.original.tdf_id}`}>
+      <ChakraNextLink
+        href={`/replay/${props.row.original.tdf_id}`}
+        color="blue.400"
+      >
         {props.getValue() as string}
       </ChakraNextLink>
     ),

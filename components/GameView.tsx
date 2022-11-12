@@ -93,7 +93,7 @@ export default function GameView({ game }: Props) {
                                 <Heading
                                   size="sm"
                                   color={`${team.ui_color}.600`}
-                                  isTruncated
+                                  noOfLines={1}
                                 >
                                   {entity.entity_desc}
                                 </Heading>

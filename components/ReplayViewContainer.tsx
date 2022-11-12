@@ -31,7 +31,7 @@ export default function ReplayViewContainer({
       </Box>
     );
 
-  if (error) return <div>{error}</div>;
+  if (error) return <div>{error.message}</div>;
 
   return <ReplayView replay={data.game[0]} />;
 }

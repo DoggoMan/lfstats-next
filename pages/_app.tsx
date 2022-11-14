@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react";
 import { ApolloProvider } from "@apollo/client";
 import client from "../lib/apollo-client";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
@@ -27,13 +28,19 @@ const theme = extendTheme({ colors, config });
 
 function LFStats({ Component, pageProps }: AppProps) {
   return (
-    <ApolloProvider client={client}>
-      <ChakraProvider theme={theme}>
-        <Shell>
-          <Component {...pageProps} />
-        </Shell>
-      </ChakraProvider>
-    </ApolloProvider>
+    <SessionProvider
+      // Provider options are not required but can be useful in situations where
+      // you have a short session maxAge time. Shown here with default values.
+      session={pageProps.session}
+    >
+      <ApolloProvider client={client}>
+        <ChakraProvider theme={theme}>
+          <Shell>
+            <Component {...pageProps} />
+          </Shell>
+        </ChakraProvider>
+      </ApolloProvider>
+    </SessionProvider>
   );
 }
 

@@ -19,6 +19,7 @@ import { MdHome } from "react-icons/md";
 import React, { ReactNode } from "react";
 import ChakraNextLink from "./ChakraNextLink";
 import ThemeSwitcher from "./ThemeSwitcher";
+import Login from "./Login";
 
 interface ShellProps {
   children: ReactNode;
@@ -147,6 +148,7 @@ export default function Shell({ children }: ShellProps) {
           <Box></Box>
 
           <Flex align="center">
+            <Login />
             <ThemeSwitcher />
             <Avatar ml="4" size="sm" cursor="pointer" />
           </Flex>

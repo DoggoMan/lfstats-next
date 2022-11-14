@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import FacebookProvider from "next-auth/providers/facebook";
+import pg from "pg";
 import SequelizeAdapter from "@next-auth/sequelize-adapter";
 import { Sequelize } from "sequelize";
 
@@ -10,6 +10,7 @@ const sequelize = new Sequelize(
   process.env.PG_PASS,
   {
     dialect: "postgres",
+    dialectModule: pg,
     host: process.env.PG_HOST,
     port: process.env.PG_PORT,
   }

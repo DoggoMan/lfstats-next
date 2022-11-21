@@ -45,8 +45,11 @@ export default function Build({ tdfId }: Props) {
     return (
       <Box justifyContent="center" px={4} maxW="2xl" mx="auto">
         <div>Build complete!</div>
+        <ChakraNextLink href={`/game/${encodeURIComponent(tdfId)}`}>
+          <Button colorScheme="green">Game</Button>
+        </ChakraNextLink>
         <ChakraNextLink href={`/replay/${encodeURIComponent(tdfId)}`}>
-          <Button colorScheme="green">Continue</Button>
+          <Button colorScheme="green">Replay</Button>
         </ChakraNextLink>
       </Box>
     );
@@ -55,20 +58,22 @@ export default function Build({ tdfId }: Props) {
 
 export async function getServerSideProps(context: any) {
   const tdfId = context.query.tid;
-  const replayExists = await ifReplayExists(tdfId);
-
-  if (replayExists) {
-    return {
-      redirect: {
-        destination: `/replay/${tdfId}`,
-        permanent: false,
-      },
-    };
-  } else {
-    return {
-      props: {
-        tdfId: tdfId,
-      },
-    };
+  const force = context.query.force || false;
+  if (force !== "true") {
+    const replayExists = await ifReplayExists(tdfId);
+    if (replayExists) {
+      return {
+        redirect: {
+          destination: `/replay/${tdfId}`,
+          permanent: false,
+        },
+      };
+    }
   }
+
+  return {
+    props: {
+      tdfId: tdfId,
+    },
+  };
 }

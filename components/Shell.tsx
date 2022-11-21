@@ -150,10 +150,8 @@ export default function Shell({ children }: ShellProps) {
           <Flex align="center">
             <Login />
             <ThemeSwitcher />
-            <Avatar ml="4" size="sm" cursor="pointer" />
           </Flex>
         </Flex>
-
         <Box as="main" p="4">
           {children}
         </Box>

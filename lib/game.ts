@@ -12,6 +12,7 @@ export async function getRecentGames(): Promise<GameMetaData[]> {
           tdf_id
           mission_start
           mission_length
+          chomper_version
           center {
             name
           }
@@ -32,6 +33,7 @@ export async function getGameMetaData(tdfId: string): Promise<GameMetaData> {
           tdf_id
           mission_start
           mission_length
+          chomper_version
           center {
             name
           }
@@ -43,15 +45,16 @@ export async function getGameMetaData(tdfId: string): Promise<GameMetaData> {
   return data.game[0];
 }
 
-export async function getGameData(id: number): Promise<GameData> {
+export async function getGameData(tdfId: string): Promise<GameData> {
   const { data } = await client.query({
     query: gql`
-      query Game($id: bigint!) {
-        game: game_by_pk(id: $id) {
+      query GameData($tdfId: String!) {
+        game: (where: { tdf_id: { _eq: $tdfId } }) {
           id
           tdf_id
           mission_start
           mission_length
+          chomper_version
           center {
             name
           }
@@ -174,8 +177,8 @@ export async function getGameData(id: number): Promise<GameData> {
         }
       }
     `,
-    variables: { id },
+    variables: { tdfId },
   });
 
-  return data.game;
+  return data.game[0];
 }

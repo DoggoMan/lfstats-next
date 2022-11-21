@@ -34,7 +34,10 @@ const defaultColumns: ColumnDef<GameMetaData>[] = [
     header: "Game Start",
     accessorFn: (row) => row.mission_start,
     cell: (props) => (
-      <ChakraNextLink href={`/game/${props.row.original.id}`} color="blue.400">
+      <ChakraNextLink
+        href={`/game/${props.row.original.tdf_id}`}
+        color="blue.400"
+      >
         {DateTime.fromISO(props.getValue() as string).toLocaleString(
           DateTime.DATETIME_SHORT
         )}

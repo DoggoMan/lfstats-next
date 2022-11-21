@@ -9,8 +9,8 @@ interface Props {
 const Game = ({ game }: Props) => <GameView game={game} />;
 
 export async function getServerSideProps(context: any) {
-  const gameId = context.params.gid;
-  const data = await getGameData(gameId);
+  const tdfId = context.params.tid;
+  const data = await getGameData(tdfId);
 
   return {
     props: {

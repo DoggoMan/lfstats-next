@@ -34,6 +34,7 @@ import { useTimer } from "../lib/stopwatch";
 import { MotionTable, MotionTr } from "./MotionTable";
 import { PositionIcon } from "./PositionIcon";
 import ReplayActions from "./ReplayActions";
+import ChompAlert from "./ChompAlert";
 
 interface ReplayProps {
   replay: ReplayData;
@@ -120,14 +121,16 @@ export default function ReplayView({ replay }: ReplayProps) {
         <title>LFStats</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <ChompAlert
+        tdfId={replay.tdf_id}
+        gameChomperVersion={replay.chomper_version}
+      />
       <Box maxW="2xl" key={"game header"} p={2} my={4} mx="auto">
         <Flex>
           <Heading>
             {replay.center?.name} Replay at {missionStart.getHours()}:
             {missionStart.getMinutes()}
           </Heading>
-          {/* REVIEW: We can't even link to lfstats.com because the replay.id is not the lfstats game id :( */}
-          {/* <Link href={`https://lfstats.com/games/view/${replay.id}`}></Link> */}
         </Flex>
       </Box>
       <Box

@@ -10,6 +10,7 @@ export const GET_REPLAY = gql`
       tdf_id
       mission_start
       mission_length
+      chomper_version
       center {
         name
       }

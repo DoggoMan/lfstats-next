@@ -49,7 +49,7 @@ export async function getGameData(tdfId: string): Promise<GameData> {
   const { data } = await client.query({
     query: gql`
       query GameData($tdfId: String!) {
-        game: (where: { tdf_id: { _eq: $tdfId } }) {
+        game(where: { tdf_id: { _eq: $tdfId } }) {
           id
           tdf_id
           mission_start

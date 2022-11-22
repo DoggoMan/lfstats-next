@@ -1,3 +1,4 @@
+import { Avatar } from "@chakra-ui/react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import styles from "./login.module.css";
 
@@ -6,7 +7,7 @@ export default function Login() {
   const loading = status === "loading";
   return (
     <div className={styles.signedInStatus}>
-      <p
+      <div
         className={`nojs-show ${
           !session && loading ? styles.loading : styles.loaded
         }`}
@@ -30,9 +31,9 @@ export default function Login() {
         )}
         {session?.user && (
           <>
-            <span
-              style={{ backgroundImage: `url(${session.user.image})` }}
-              className={styles.avatar}
+            <Avatar
+              name={session.user.name || ""}
+              src={session.user.image || ""}
             />
             <span className={styles.signedInText}>
               <small>Signed in as</small>
@@ -51,7 +52,7 @@ export default function Login() {
             </a>
           </>
         )}
-      </p>
+      </div>
     </div>
   );
 }

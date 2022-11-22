@@ -18,6 +18,7 @@ import { GameData } from "../types/GameData";
 import { decodeMVP, millisToMinutesAndSeconds } from "../lib/helper";
 import { PositionIcon } from "./PositionIcon";
 import { StatDisplay } from "./StatDisplay";
+import ChompAlert from "./ChompAlert";
 
 interface Props {
   game: GameData;
@@ -31,6 +32,10 @@ export default function GameView({ game }: Props) {
         <title>LFStats - Game {game.id}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <ChompAlert
+        tdfId={game.tdf_id}
+        gameChomperVersion={game.chomper_version}
+      />
       <Box maxW="2xl" key={"game header"} p={2} my={4} mx="auto">
         <Heading>Game {game.tdf_id}</Heading>
         <Text>
@@ -67,7 +72,7 @@ export default function GameView({ game }: Props) {
                 <Heading color={`${team.ui_color}.500`}>{team.score}</Heading>
               </Flex>
 
-              <Accordion allowMultiple allowToggle>
+              <Accordion allowMultiple>
                 {team.game_entities
                   .filter(
                     ({ entity_type }: { entity_type: string }) =>
@@ -217,7 +222,7 @@ export default function GameView({ game }: Props) {
                                 />
                               )}
                             </SimpleGrid>
-                            <Accordion allowMultiple allowToggle>
+                            <Accordion allowMultiple>
                               <AccordionItem>
                                 <h1>
                                   <AccordionButton>

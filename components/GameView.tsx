@@ -29,7 +29,7 @@ export default function GameView({ game }: Props) {
   return (
     <div>
       <Head>
-        <title>LFStats - Game {game.id}</title>
+        <title>LFStats</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ChompAlert

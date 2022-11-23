@@ -19,5 +19,5 @@ export interface GameEntity {
     ipl_id: string;
   };
   game_entity_states?: GameEntityState[];
-  game_entity_state_final?: GameEntityState;
+  game_entity_state_final: GameEntityState;
 }

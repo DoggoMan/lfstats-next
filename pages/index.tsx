@@ -55,9 +55,9 @@ export default function Homepage({ centers }: Props) {
                       color="blue.400"
                     >
                       {center.last_social &&
-                        DateTime.fromISO(center.last_social, {
-                          zone: "utc",
-                        }).toLocaleString()}
+                        DateTime.fromISO(center.last_social).toLocaleString(
+                          DateTime.DATETIME_SHORT
+                        )}
                     </ChakraNextLink>
                   </Td>
                 </Tr>

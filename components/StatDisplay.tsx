@@ -1,20 +1,21 @@
-import { Stat, StatHelpText, StatNumber, StatLabel } from "@chakra-ui/react";
+import { Stat, StatNumber, StatLabel } from "@chakra-ui/react";
 import { FC } from "react";
 
 interface StatProps {
   name: string;
   value: string | number;
+  labelColor?: string;
   size?: string;
 }
 
-export const StatDisplay: FC<StatProps> = ({ name, value, size = "sm" }) => (
+export const StatDisplay: FC<StatProps> = ({
+  name,
+  value,
+  labelColor = null,
+  size = "sm",
+}) => (
   <Stat size={size}>
-    <StatLabel>{name}</StatLabel>
-    <StatNumber>
-      {value.toLocaleString(undefined, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      })}
-    </StatNumber>
+    <StatLabel color={labelColor ?? undefined}>{name}</StatLabel>
+    <StatNumber>{value}</StatNumber>
   </Stat>
 );

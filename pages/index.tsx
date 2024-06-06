@@ -11,15 +11,14 @@ import {
   Td,
 } from "@chakra-ui/react";
 import ChakraNextLink from "../components/ChakraNextLink";
-import { DateTime } from "luxon";
-import { getCenters } from "../lib/center";
-import { CenterMetaData } from "../types/CenterMetaData";
+import { getRecentEvents } from "../lib/event";
+import { EventMetaData } from "../types/EventMetaData";
 
 interface Props {
-  centers: CenterMetaData[];
+  events: EventMetaData[];
 }
 
-export default function Homepage({ centers }: Props) {
+export default function Homepage({ events }: Props) {
   return (
     <div>
       <Head>
@@ -42,22 +41,19 @@ export default function Homepage({ centers }: Props) {
             <Thead>
               <Tr>
                 <Th>Center</Th>
-                <Th>Last Played</Th>
+                <Th>Event</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {centers.slice(0, 10).map((center) => (
-                <Tr key={center.id}>
-                  <Td>{center.name}</Td>
+              {events.map((event) => (
+                <Tr key={event.id}>
+                  <Td>{event.center.name}</Td>
                   <Td>
                     <ChakraNextLink
-                      href={`/socials/${center.id}`}
+                      href={`/socials/${event.id}`}
                       color="blue.400"
                     >
-                      {center.last_social &&
-                        DateTime.fromISO(center.last_social, {
-                          zone: "utc",
-                        }).toLocaleString(DateTime.DATE_SHORT)}
+                      {event.name}
                     </ChakraNextLink>
                   </Td>
                 </Tr>
@@ -71,11 +67,11 @@ export default function Homepage({ centers }: Props) {
 }
 
 export async function getServerSideProps() {
-  const centerData = await getCenters();
+  const eventData = await getRecentEvents();
 
   return {
     props: {
-      centers: centerData,
+      events: eventData,
     },
   };
 }

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import client from "./apollo-client";
-import { GameData } from "../types/GameData";
+import { GameDataTDF } from "../types/GameData";
 import { GameMetaData } from "../types/GameMetaData";
 
 export async function getRecentGames(): Promise<GameMetaData[]> {
@@ -45,7 +45,7 @@ export async function getGameMetaData(tdfId: string): Promise<GameMetaData> {
   return data.game[0];
 }
 
-export async function getGameData(tdfId: string): Promise<GameData> {
+export async function getGameData(tdfId: string): Promise<GameDataTDF> {
   const { data } = await client.query({
     query: gql`
       query GameData($tdfId: String!) {

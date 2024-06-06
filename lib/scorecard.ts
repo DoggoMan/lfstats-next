@@ -50,3 +50,37 @@ export async function getSocialSimpleScorecardByDate(
 
   return data.scorecards;
 }
+
+export async function getSimpleScorecardByEventId(eventId: number) {
+  const { data } = await client.query({
+    query: gql`
+      query getSimpleScorecardByEventId {
+        scorecards(where: { event_id: { _eq: $eventId } }) {
+          player_id
+          player {
+            player_name
+          }
+          game {
+            center_id
+            duration
+            game_datetime
+            game_length
+            game_name
+          }
+          position
+          score
+          mvp_points
+          mvp_details
+          hit_diff
+          shot_opponent
+          times_zapped
+          medic_hits
+          accuracy
+          shot_team
+        }
+      }
+    `,
+    variables: { eventId },
+  });
+  return data.scorecards;
+}

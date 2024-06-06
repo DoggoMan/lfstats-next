@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import client from "./apollo-client";
 import { GameAction } from "../types/GameAction";
-import { GameData } from "../types/GameData";
+import { GameDataTDF } from "../types/GameData";
 
 export const GET_REPLAY = gql`
   query Replay($tdfId: String!) {
@@ -156,7 +156,7 @@ export const GET_REPLAY = gql`
   }
 `;
 
-export type ReplayData = GameData & { game_actions: GameAction[] };
+export type ReplayData = GameDataTDF & { game_actions: GameAction[] };
 
 export async function ifReplayExists(tdfId: string): Promise<boolean> {
   const { data } = await client.query({

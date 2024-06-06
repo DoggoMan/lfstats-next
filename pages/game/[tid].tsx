@@ -1,9 +1,9 @@
 import { getGameData } from "../../lib/game";
-import { GameData } from "../../types/GameData";
+import { GameDataTDF } from "../../types/GameData";
 import GameView from "../../components/GameView";
 
 interface Props {
-  game: GameData;
+  game: GameDataTDF;
 }
 
 const Game = ({ game }: Props) => <GameView game={game} />;

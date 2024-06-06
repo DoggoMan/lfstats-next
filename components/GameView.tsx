@@ -14,14 +14,14 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import Head from "next/head";
-import { GameData } from "../types/GameData";
+import { GameDataTDF } from "../types/GameData";
 import { decodeMVP, millisToMinutesAndSeconds } from "../lib/helper";
 import { PositionIcon } from "./PositionIcon";
 import { StatDisplay } from "./StatDisplay";
 import ChompAlert from "./ChompAlert";
 
 interface Props {
-  game: GameData;
+  game: GameDataTDF;
 }
 
 export default function GameView({ game }: Props) {

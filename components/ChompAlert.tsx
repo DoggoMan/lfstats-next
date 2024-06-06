@@ -4,7 +4,7 @@ import useSWR from "swr";
 
 interface ChompAlertProps {
   tdfId: string;
-  gameChomperVersion: string;
+  gameChomperVersion?: string;
 }
 
 const fetcher = async (

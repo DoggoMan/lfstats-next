@@ -6,18 +6,14 @@ export async function getCenterMetaData(id: number): Promise<CenterMetaData> {
   const { data } = await client.query({
     query: gql`
       query CenterMetaData($id: bigint!) {
-        center: center_by_pk(id: $id) {
+        center: centers_by_pk(id: $id) {
           id
           name
-          region_code
           short_name
-          site_code
-          games_aggregate(
-            where: { game_tags: { tag: { tag_name: { _eq: "Social" } } } }
-          ) {
+          games_aggregate(where: { type: { _eq: "social" } }) {
             aggregate {
               max {
-                mission_start
+                game_datetime
               }
             }
           }
@@ -28,7 +24,7 @@ export async function getCenterMetaData(id: number): Promise<CenterMetaData> {
   });
 
   let { games_aggregate, ...center } = data.center;
-  center.last_social = games_aggregate.aggregate.max.mission_start;
+  center.last_social = games_aggregate.aggregate.max.game_datetime;
   return center;
 }
 
@@ -36,23 +32,18 @@ export async function getCenters(): Promise<CenterMetaData> {
   const { data } = await client.query({
     query: gql`
       query CenterMetaData {
-        center(
+        centers(
           order_by: {
-            games_aggregate: { max: { mission_start: desc_nulls_last } }
+            games_aggregate: { max: { game_datetime: desc_nulls_last } }
           }
-          limit: 5
         ) {
           id
           name
-          region_code
           short_name
-          site_code
-          games_aggregate(
-            where: { game_tags: { tag: { tag_name: { _eq: "Social" } } } }
-          ) {
+          games_aggregate(where: { type: { _eq: "social" } }) {
             aggregate {
               max {
-                mission_start
+                game_datetime
               }
             }
           }
@@ -61,9 +52,9 @@ export async function getCenters(): Promise<CenterMetaData> {
     `,
   });
 
-  return data.center.map(
+  return data.centers.map(
     ({ games_aggregate, ...args }: { games_aggregate: any }) => ({
-      last_social: games_aggregate.aggregate.max.mission_start,
+      last_social: games_aggregate.aggregate.max.game_datetime,
       ...args,
     })
   );

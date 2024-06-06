@@ -46,7 +46,7 @@ export default function Homepage({ centers }: Props) {
               </Tr>
             </Thead>
             <Tbody>
-              {centers.map((center) => (
+              {centers.slice(0, 10).map((center) => (
                 <Tr key={center.id}>
                   <Td>{center.name}</Td>
                   <Td>
@@ -55,9 +55,9 @@ export default function Homepage({ centers }: Props) {
                       color="blue.400"
                     >
                       {center.last_social &&
-                        DateTime.fromISO(center.last_social).toLocaleString(
-                          DateTime.DATETIME_SHORT
-                        )}
+                        DateTime.fromISO(center.last_social, {
+                          zone: "utc",
+                        }).toLocaleString(DateTime.DATE_SHORT)}
                     </ChakraNextLink>
                   </Td>
                 </Tr>

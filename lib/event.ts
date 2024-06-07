@@ -105,6 +105,13 @@ export async function getEventData(id: number): Promise<EventData> {
                 player_name
                 ipl_id
               }
+              game {
+                id
+                tdf_id: tdf_key
+                mission_start: game_datetime
+                mission_length: duration
+                name: game_name
+              }
               position
               score
               mvp: mvp_points

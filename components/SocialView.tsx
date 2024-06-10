@@ -14,7 +14,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { useState } from "react";
-import { ColDef } from "ag-grid-community";
+import { ColDef, GridOptions } from "ag-grid-community";
 import { FullScorecard } from "../types/FullScorecard";
 import ChakraNextLink from "./ChakraNextLink";
 
@@ -70,8 +70,13 @@ const SocialView = ({ event }: Props) => {
     {
       field: "mvp",
       headerName: "MVP",
-      valueFormatter: (p) => p.value.toFixed(2),
+      cellRenderer: (props: { value: number; data: FullScorecard }) => {
+        return (
+          <MVPModal mvp={props.value} mvpDetails={props.data.mvp_details} />
+        );
+      },
       flex: 1,
+      sort: "desc",
     },
     {
       field: "hit_diff",
@@ -88,6 +93,10 @@ const SocialView = ({ event }: Props) => {
     { field: "shot_team", headerName: "Shot Team", flex: 1 },
   ]);
 
+  const gridOptions: GridOptions = {
+    sortingOrder: ["desc", "asc", null],
+  };
+
   return (
     <>
       <Heading>
@@ -95,6 +104,7 @@ const SocialView = ({ event }: Props) => {
       </Heading>
       <div className="ag-theme-quartz">
         <AgGridReact
+          gridOptions={gridOptions}
           rowData={rowData}
           columnDefs={colDefs}
           pagination={true}

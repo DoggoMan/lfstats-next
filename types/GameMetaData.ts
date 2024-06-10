@@ -5,6 +5,7 @@ export interface GameMetaData {
   tdf_id: string;
   mission_start: string;
   mission_length: number;
+  winner: string;
   name?: string;
   chomper_version?: string;
   center?: CenterMetaData;

@@ -1,9 +1,9 @@
 import SocialView from "../../components/SocialView";
 import { getEventData } from "../../lib/event";
-import { EventMetaData } from "../../types/EventMetaData";
+import { EventData } from "../../types/EventData";
 
 interface Props {
-  event: EventMetaData;
+  event: EventData;
 }
 const Social = ({ event }: Props) => <SocialView event={event} />;
 

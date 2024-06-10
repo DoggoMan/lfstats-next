@@ -24,7 +24,6 @@ export interface SimpleScorecard {
   mvp: number;
   mvp_details: MVPData;
   shot_opponent: number;
-  times_zapped: number;
   medic_hits: number;
   accuracy: number;
   shot_team: number;

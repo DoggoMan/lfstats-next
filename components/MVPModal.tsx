@@ -48,7 +48,7 @@ export default function MVPModal({ mvp, mvpDetails }: Props) {
                   let color = "black";
                   if (key[1].value > 0) color = "green";
                   else if (key[1].value < 0) color = "red";
-                  else return <></>;
+                  else return;
 
                   return (
                     <Tr key={value} color={color}>

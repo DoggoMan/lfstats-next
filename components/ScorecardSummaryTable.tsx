@@ -1,23 +1,121 @@
-import { Heading, Text } from "@chakra-ui/react";
+import { useQuery } from "@apollo/client";
+import { Spinner, Text } from "@chakra-ui/react";
+import { gql } from "__generated__/gql";
+import { ColDef, GridOptions } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FullScorecard } from "types/FullScorecard";
 import ChakraNextLink from "./ChakraNextLink";
 import MVPModal from "./MVPModal";
-import { ColDef, GridOptions } from "ag-grid-community";
-import { GameData } from "types/GameData";
 
 interface Props {
-  games: GameData[];
+  eventId: number;
 }
 
-export default function ScorecardSummaryTable({ games }: Props) {
-  const [rowData, setRowData] = useState<FullScorecard[]>(
-    games
-      .map((item) => item.scorecards)
-      .flat()
-      .sort((a, b) => b.mvp - a.mvp)
-  );
+const GET_EVENT_DATA = gql(`
+    query EventData($id: bigint!) {
+      event: events_by_pk(id: $id) {
+        id
+        name
+        type
+        is_comp
+        center {
+          id
+          name
+          short_name
+        }
+        games_aggregate {
+          aggregate {
+            max {
+              game_datetime
+            }
+          }
+        }
+        games {
+          id
+          tdf_id: tdf_key
+          mission_start: game_datetime
+          mission_length: duration
+          name: game_name
+          winner
+          scorecards {
+            id
+            player {
+              id
+              player_name
+              ipl_id
+            }
+            game {
+              id
+              tdf_id: tdf_key
+              mission_start: game_datetime
+              mission_length: duration
+              name: game_name
+              winner
+            }
+            team
+            position
+            survived
+            shots_hit
+            shots_fired
+            times_zapped
+            times_missiled
+            missile_hits
+            nukes_activated
+            nukes_detonated
+            nukes_canceled
+            medic_hits
+            own_medic_hits
+            medic_nukes
+            scout_rapid
+            life_boost
+            ammo_boost
+            lives_left
+            score
+            max_score
+            shots_left
+            penalty_count
+            shot_3hit
+            elim_other_team
+            team_elim
+            own_nuke_cancels
+            shot_opponent
+            shot_team
+            missiled_opponent
+            missiled_team
+            resupplies
+            rank
+            bases_destroyed
+            accuracy
+            hit_diff
+            mvp: mvp_points
+            mvp_details
+            sp_earned
+            sp_spent
+            type
+            is_sub
+            uptime
+            resupply_downtime
+            other_downtime
+            shots_fired_during_rapid
+            shots_hit_during_rapid
+            shot_opponent_during_rapid
+            shot_team_during_rapid
+            times_team_missiled
+          }
+        }
+      }
+    }
+  `);
+
+export default function ScorecardSummaryTable({ eventId }: Props) {
+  const { data, loading, error } = useQuery(GET_EVENT_DATA, {
+    variables: { id: eventId },
+  });
+
+  const [rowData, setRowData] = useState<FullScorecard[]>();
   const [colDefs, setColDefs] = useState<ColDef<FullScorecard>[]>([
     {
       field: "player.player_name",
@@ -89,17 +187,32 @@ export default function ScorecardSummaryTable({ games }: Props) {
     sortingOrder: ["desc", "asc", null],
   };
 
-  return (
-    <div className="ag-theme-quartz">
-      <AgGridReact
-        gridOptions={gridOptions}
-        rowData={rowData}
-        columnDefs={colDefs}
-        pagination={true}
-        paginationPageSize={10}
-        paginationPageSizeSelector={false}
-        domLayout="autoHeight"
-      />
-    </div>
-  );
+  useEffect(() => {
+    if (!loading && data && data.event) {
+      setRowData(
+        data.event.games
+          .map((item) => item.scorecards)
+          .flat()
+          .sort((a, b) => b.mvp - a.mvp)
+      );
+    }
+  }, [loading, data]);
+
+  if (loading) return <Spinner />;
+  if (error) return "Error...";
+  if (data) {
+    return (
+      <div className="ag-theme-quartz">
+        <AgGridReact
+          gridOptions={gridOptions}
+          rowData={rowData}
+          columnDefs={colDefs}
+          pagination={true}
+          paginationPageSize={10}
+          paginationPageSizeSelector={false}
+          domLayout="autoHeight"
+        />
+      </div>
+    );
+  }
 }

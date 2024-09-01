@@ -54,7 +54,7 @@ export async function getSocialSimpleScorecardByDate(
 export async function getSimpleScorecardByEventId(eventId: number) {
   const { data } = await client.query({
     query: gql`
-      query getSimpleScorecardByEventId {
+      query getSimpleScorecardByEventId($eventId: bigint!) {
         scorecards(where: { event_id: { _eq: $eventId } }) {
           player_id
           player {

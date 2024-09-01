@@ -31,7 +31,7 @@ export async function getCenterMetaData(id: number): Promise<CenterMetaData> {
 export async function getCenters(): Promise<CenterMetaData> {
   const { data } = await client.query({
     query: gql`
-      query CenterMetaData {
+      query AllCenterMetaData {
         centers(
           order_by: {
             games_aggregate: { max: { game_datetime: desc_nulls_last } }
